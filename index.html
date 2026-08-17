@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angelurlaub Schweden 2026 — Åsnen</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a1628;--surface:#112240;--border:#1d3557;--water:#4a7c8c;--birch:#5a8a5a;--amber:#d4a373;--gold:#e6b85e;--text:#e2e8f0;--muted:#8899aa;--danger:#e76f6f}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
+.hero{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0d1b2a 0%,#1b3a4b 50%,#2a5a6a 100%);z-index:0}
+.hero-bg::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 30% 50%,rgba(74,124,140,.3) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(90,138,90,.2) 0%,transparent 50%);z-index:1}
+.hero-bg .waves{position:absolute;bottom:0;left:0;width:100%;height:120px;background:var(--bg);clip-path:ellipse(50% 100% at 50% 100%);opacity:.3}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero h1{font-size:clamp(2rem,6vw,4rem);font-weight:800;color:var(--gold);letter-spacing:-1px;margin-bottom:8px}
+.hero .sub{font-size:clamp(1rem,2.5vw,1.4rem);color:var(--muted);font-weight:300;margin-bottom:6px}
+.hero .date{font-size:1rem;color:var(--water);letter-spacing:3px;margin-bottom:20px}
+.hero .countdown{display:flex;gap:16px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.hero .countdown-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:60px;text-align:center}
+.hero .countdown-item .num{font-size:1.6rem;font-weight:700;color:var(--gold)}
+.hero .countdown-item .label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.hero .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.hero .tags span{background:var(--surface);padding:4px 12px;border-radius:20px;font-size:.75rem;color:var(--muted);border:1px solid var(--border)}
+.cta{display:inline-block;margin-top:24px;padding:10px 28px;background:var(--birch);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.9rem;transition:.2s}
+.cta:hover{background:var(--water);transform:translateY(-2px)}
+
+nav{position:sticky;top:0;z-index:50;background:rgba(10,22,40,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 20px}
+nav ul{display:flex;gap:0;list-style:none;max-width:1000px;margin:0 auto;overflow-x:auto;padding:10px 0}
+nav ul li a{display:block;padding:6px 14px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:500;white-space:nowrap;transition:.2s;border-radius:6px}
+nav ul li a:hover{color:var(--gold);background:var(--surface)}
+
+.section{padding:50px 20px;max-width:900px;margin:0 auto}
+.section h2{font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:24px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.section h2 .icon{font-size:1.4rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
+.card h3{color:var(--water);font-size:1rem;font-weight:600;margin-bottom:8px}
+.card p,.card li{font-size:.85rem;color:var(--muted);line-height:1.7}
+.card ul{list-style:none;padding:0}
+.card ul li::before{content:'▸ ';color:var(--birch)}
+.card ul li{margin-bottom:4px;font-size:.85rem;color:var(--muted)}
+
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-top:10px}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:.2s}
+.team-card:hover{border-color:var(--birch);transform:translateY(-2px)}
+.team-card .avatar{font-size:2.5rem;margin-bottom:6px}
+.team-card .name{font-size:.85rem;font-weight:600;color:var(--text)}
+.team-card .role{font-size:.7rem;color:var(--muted);margin-top:2px}
+
+.route-steps{list-style:none;padding:0;margin:10px 0}
+.route-steps li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.route-steps li:last-child{border-bottom:none}
+.route-steps .step-icon{width:28px;height:28px;background:var(--birch);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;margin-top:2px}
+.route-steps .step-icon.dep{background:var(--water)}
+.route-steps .step-icon.ferry{background:var(--gold);color:#000}
+.route-steps .step-content{flex:1}
+.route-steps .step-content strong{display:block;font-size:.85rem;color:var(--text)}
+.route-steps .step-content span{font-size:.75rem;color:var(--muted)}
+
+.costs{width:100%;border-collapse:collapse;font-size:.85rem}
+.costs th{text-align:left;padding:10px 12px;background:var(--border);color:var(--gold);font-weight:600}
+.costs td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--muted)}
+.costs td:last-child{text-align:right;font-weight:600;color:var(--text)}
+.costs tr.total td{border-top:2px solid var(--gold);font-weight:700;color:var(--gold);padding-top:12px}
+.costs tr.per-person td{font-weight:600;color:var(--water);padding-bottom:12px}
+
+.pack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.pack-item{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer;transition:.2s;font-size:.8rem;color:var(--muted)}
+.pack-item:hover{border-color:var(--water)}
+.pack-item input[type=checkbox]{accent-color:var(--birch);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.pack-item.checked{opacity:.5;text-decoration:line-through;border-color:var(--birch)}
+
+.fish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:10px}
+.fish-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.fish-card .fish-icon{font-size:2rem;margin-bottom:4px}
+.fish-card .fish-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.fish-card .fish-sci{font-size:.7rem;color:var(--muted);font-style:italic}
+.fish-card .fish-se{font-size:.7rem;color:var(--water);margin-top:2px}
+
+.important-box{background:rgba(231,111,111,.08);border:1px solid var(--danger);border-radius:10px;padding:20px;margin-top:10px}
+.important-box h3{color:var(--danger);margin-bottom:10px}
+.important-box ul{list-style:none;padding:0}
+.important-box ul li{padding:4px 0;font-size:.85rem;color:var(--muted)}
+.important-box ul li::before{content:'⚠️ '}
+
+.rules-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:10px}
+.rules-box h3{color:var(--gold);margin-bottom:10px}
+.rules-box ul{list-style:none;padding:0}
+.rules-box ul li{padding:3px 0;font-size:.82rem;color:var(--muted)}
+
+footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);margin-top:20px}
+footer a{color:var(--water);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="hero">
+<div class="hero-bg"><div class="waves"></div></div>
+<div class="hero-content">
+<h1>🏞️ Åsnen 2026</h1>
+<div class="sub">Schweden Angelurlaub</div>
+<div class="date">05. – 12. September 2026 · Småland</div>
+<div class="countdown" id="countdown"></div>
+<div class="tags">
+<span>🎣 Hecht · Zander · Barsch</span>
+<span>🏠 Fålaboda 7</span>
+<span>🚤 Motorboot</span>
+<span>👥 5 Mann</span>
+</div>
+<a href="#info" class="cta">Zum Plan ↓</a>
+</div>
+</div>
+
+<nav id="nav">
+<ul>
+<li><a href="#team">👥 Team</a></li>
+<li><a href="#route">🚗 Route</a></li>
+<li><a href="#house">🏠 Haus</a></li>
+<li><a href="#fishing">🎣 Angeln</a></li>
+<li><a href="#costs">💰 Kosten</a></li>
+<li><a href="#packing">🧳 Packliste</a></li>
+<li><a href="#info">📋 Wichtig</a></li>
+</ul>
+</nav>
+
+<section class="section" id="team">
+<h2><span class="icon">👥</span> Team</h2>
+<div class="team-grid" id="teamGrid"></div>
+</section>
+
+<section class="section" id="route">
+<h2><span class="icon">🚗</span> Reiseroute</h2>
+<div class="card">
+<h3>📅 Abfahrt: 04. September 2026</h3>
+<ul class="route-steps" id="routeSteps"></ul>
+</div>
+<div class="card">
+<h3>📍 Ziel</h3>
+<p><strong>Fålaboda 7</strong>, 362 95 Urshult, Småland, Schweden</p>
+<p style="margin-top:4px;font-size:.8rem;color:var(--muted)">Gesamtstrecke: ca. 1.150 km | Fahrtzeit: ca. 17h (inkl. Fähre)</p>
+</div>
+</section>
+
+<section class="section" id="house">
+<h2><span class="icon">🏠</span> Unterkunft</h2>
+<div class="card">
+<h3>Fålaboda 7 — See Åsnen</h3>
+<p>Vermieter: Barbara Diekamp · Fålaboda 7, 362 95 Urshult</p>
+<p style="margin-top:6px">🔗 <a href="https://www.ferienhausmiete.de/413920.htm" target="_blank" style="color:var(--water)">Ferienhausmiete.de</a></p>
+<p style="margin-top:6px;color:var(--muted);font-size:.8rem">🌲 Mitten in Småland, direkt am Åsnen-See. Motorboot inklusive.</p>
+</div>
+<div class="card">
+<h3>🚤 Motorboot</h3>
+<p>Im Mietpreis enthalten (70€). Unverzichtbar zum Erreichen der besten Angelplätze — der See hat über 1.000 Inseln!</p>
+</div>
+</section>
+
+<section class="section" id="fishing">
+<h2><span class="icon">🎣</span> Angeln am Åsnen</h2>
+<div class="card">
+<p>Der Åsnen-See (ca. 150 km²) ist ein Paradies für Raubfischangler. Mit über 1.000 Inseln, verwinkelten Buchten und einer Durchschnittstiefe von nur 3,1 m ist er ideal für Hecht, Zander und Barsch.</p>
+</div>
+<div class="fish-grid" id="fishGrid"></div>
+<div class="card" style="margin-top:14px">
+<h3>🎯 Methoden</h3>
+<ul>
+<li><strong>Spinnfischen & Jerken</strong> — Perfekt in Flachwasserzonen, Krautfeldern und Schilfkanten</li>
+<li><strong>Schleppangeln (Trolling)</strong> — Ideal für Freiwasserflächen und tiefere Rinnen</li>
+<li><strong>Vertikalangeln & Drop-Shot</strong> — Erfolgreich auf Zander und große Barsche</li>
+</ul>
+</div>
+<div class="card">
+<h3>🎫 Angelkarte (Fiskekort)</h3>
+<p>Einfach online buchen: <a href="https://www.ifiske.se" target="_blank" style="color:var(--water)">iFiske.se</a> · ca. 45€/Person</p>
+<p style="font-size:.8rem;color:var(--muted);margin-top:4px">⚠️ Entnahmespektrum (Window Limit): Hechte & Zander 50–80 cm, max. 1–2 Fische/Tag. Große Fische zurück!</p>
+</div>
+</section>
+
+<section class="section" id="costs">
+<h2><span class="icon">💰</span> Kosten</h2>
+<div class="card">
+<table class="costs" id="costTable"></table>
+</div>
+</section>
+
+<section class="section" id="packing">
+<h2><span class="icon">🧳</span> Packliste</h2>
+<div class="pack-grid" id="packGrid"></div>
+</section>
+
+<section class="section" id="info">
+<h2><span class="icon">📋</span> Wichtige Infos</h2>
+<div class="important-box">
+<h3>⚠️ Unbedingt beachten</h3>
+<ul>
+<li>🪪 <strong>Personalausweis / Reisepass</strong> — gültig! Es gibt Grenzkontrollen!</li>
+<li>🎣 Angelschein für Schweden (45€, online über iFiske.se)</li>
+<li>🏦 Kaution für das Haus: 150€</li>
+<li>🧹 Reinigungspauschale: 90€</li>
+<li>📦 Dachbox: 130€ (Abholung 03.09. 8 Uhr)</li>
+</ul>
+</div>
+<div class="rules-box">
+<h3>🚗 Autofahr-Regeln</h3>
+<ul>
+<li>❌ Rauchen, Kiffen, Spritzen, Lines ziehen</li>
+<li>❌ Übermäßig saufen, Huren bestellen</li>
+<li>❌ Dummes Zeug labbern, no politics, no religion</li>
+<li>✅ Wir haben uns alle lieb! ❤️</li>
+</ul>
+</div>
+<div class="card">
+<h3>🛒 Einkaufen</h3>
+<p><strong>Tempo Urshult</strong> — Södra Vägen 21A, 9 km entfernt (Lebensmittel)</p>
+<p style="margin-top:4px"><strong>In Tingsryd</strong> — größere Auswahl, inkl. Systembolaget! 🍷</p>
+</div>
+</section>
+
+<footer>
+<p>🌲 Angelurlaub Schweden 2026 · See Åsnen · Småland</p>
+<p style="margin-top:4px;font-size:.7rem">Plan von Tadzio · Seite von A.I.D.A. · <a href="https://github.com/elterente/angelurlaub-schweden-2026">GitHub</a></p>
+</footer>
+
+<script>
+// ============================================================
+// TADZIO: ÄNDERE HIER DIE DATEN — KEIN HTML NÖTIG
+// ============================================================
+const DATA = {
+  title: 'Åsnen 2026',
+  subtitle: 'Schweden Angelurlaub',
+  dateStart: '2026-09-05',
+  dateEnd: '2026-09-12',
+  departDate: '2026-09-04T15:00:00',
+  location: 'Fålaboda 7, 362 95 Urshult, Småland, Schweden',
+
+  team: [
+    { name: 'Tadzio', role: 'Organisator', emoji: '🧑‍✈️' },
+    { name: 'Hubert', role: 'Mitfahrer', emoji: '🧔' },
+    { name: 'Bartosz', role: 'Mitfahrer', emoji: '🧑' },
+    { name: 'Jurek', role: 'Mitfahrer', emoji: '🧑‍🦰' },
+    { name: 'Ben', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦱' },
+    { name: 'elterente', role: 'Mitfahrer (Frankfurt)', emoji: '🙋' },
+  ],
+
+  route: [
+    { time: '15:00', place: 'Frankfurt → Münster', desc: 'Start ab Frankfurt, 300 km, 3h. Hubert abholen.', icon: 'dep' },
+    { time: '19:00', place: 'Münster → Hamburg Airport', desc: '290 km, 3h. Ben abholen (Ankunft 22 Uhr).', icon: 'dep' },
+    { time: '22:30', place: 'Hamburg → Puttgarden', desc: '150 km, Ankunft ca. 01:00 Uhr.', icon: 'dep' },
+    { time: '01:00', place: 'Fähre Puttgarden → Rødbyhavn', desc: 'Scandlines-Fähre, 1h 40min Überfahrt.', icon: 'ferry' },
+    { time: '03:00', place: 'Rødbyhavn → Kopenhagen → Malmö', desc: '200 km über Öresundbrücke, Ankunft Malmö ca. 05:30.', icon: 'dep' },
+    { time: '05:30', place: 'Malmö → Sölvesborg → Urshult', desc: '186 km, Ankunft Fålaboda 7 ca. 09:00 Uhr.', icon: 'dep' },
+    { time: '09:00', place: '🏁 Ankunft Fålaboda 7', desc: 'Beziehen, einrichten, erste Angelrunde!', icon: 'ferry' },
+  ],
+
+  fish: [
+    { name: 'Hecht', sci: 'Esox lucius', se: 'Gädda', emoji: '🐊', desc: 'König des Åsnen! Dichte Bestände, Riesen über 100 cm möglich.' },
+    { name: 'Zander', sci: 'Sander lucioperca', se: 'Gös', emoji: '👁️', desc: 'Sehr begehrt. Perfekt vertikal oder schleppend in den Rinnen.' },
+    { name: 'Barsch', sci: 'Perca fluviatilis', se: 'Aborre', emoji: '🐟', desc: 'Dicke Kerle (30–40+ cm) an Felsen und Steilküsten.' },
+    { name: 'Schleie', sci: 'Tinca tinca', se: 'Sutare', emoji: '🐠', desc: 'Auch Friedfische kommen nicht zu kurz.' },
+  ],
+
+  costs: [
+    { item: 'Ferienhaus + Motorboot', amount: '800 €' },
+    { item: 'Sprit (2.300 km)', amount: '400 €' },
+    { item: 'Fähre + Öresundbrücke (4 Pers.)', amount: '280 €' },
+    { item: 'Essen & Trinken (1 Woche)', amount: '400 €' },
+    { item: 'Angelscheine (4× 45€)', amount: '180 €' },
+    { item: 'Kaution Haus', amount: '150 €' },
+    { item: 'Reinigung', amount: '90 €' },
+    { item: 'Dachbox Miete', amount: '130 €' },
+    { item: 'Wein (Jacques Depot)', amount: '96 €' },
+    { item: 'Whisky (2×)', amount: '~60 €' },
+    { item: 'Gesamt', amount: '2.586 €', total: true },
+    { item: 'Pro Person (bei 5)', amount: '~517 €', perPerson: true },
+  ],
+
+  packing: [
+    '🎣 Angelausrüstung (Rute, Rolle, Köder, Kescher)',
+    '🪱 Maden und Regenwürmer (in Wolfsburg kaufen)',
+    '🪪 Personalausweis / Reisepass (gültig!)',
+    '🛏️ Bettwäsche / Schlafsack / Bettlaken',
+    '🧴 Handtücher, Tee, Klopapier',
+    '👕 Klamotten (nur das Nötigste — wir fischen, nicht heiraten)',
+    '🔦 Taschenlampe',
+    '🚬 Tabak, Zigaretten, Kräuter (sehr wichtig!)',
+    '🧊 Kühlbox für Proviant (Brot, Eier, Käse, Schinken)',
+    '🥩 Grillkohle, Grillanzünder, Grillspieße',
+    '🍷 Wein (Jacques Depot) + Whisky',
+    '📱 Handy-Ladegerät, Powerbank',
+    '🧢 Regenjacke, Sonnencreme, Mückenschutz',
+    '📷 Kamera / GoPro',
+  ],
+};
+
+// ============================================================
+// RENDER-FUNKTIONEN
+// ============================================================
+
+// Countdown
+function updateCountdown() {
+  const el = document.getElementById('countdown');
+  const target = new Date(DATA.departDate).getTime();
+  const now = new Date().getTime();
+  const diff = target - now;
+  if (diff <= 0) { el.innerHTML = '<div style="color:var(--gold);font-weight:700">🚀 Auf geht\'s!</div>'; return; }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  el.innerHTML = `
+    <div class="countdown-item"><div class="num">${days}</div><div class="label">Tage</div></div>
+    <div class="countdown-item"><div class="num">${hours}</div><div class="label">Stunden</div></div>
+    <div class="countdown-item"><div class="num">${mins}</div><div class="label">Minuten</div></div>
+  `;
+}
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
+// Team
+document.getElementById('teamGrid').innerHTML = DATA.team.map(m =>
+  `<div class="team-card"><div class="avatar">${m.emoji}</div><div class="name">${m.name}</div><div class="role">${m.role}</div></div>`
+).join('');
+
+// Route
+document.getElementById('routeSteps').innerHTML = DATA.route.map(r =>
+  `<li><div class="step-icon ${r.icon}">${r.icon==='ferry'?'⛴️':'🚗'}</div><div class="step-content"><strong>${r.time} — ${r.place}</strong><span>${r.desc}</span></div></li>`
+).join('');
+
+// Fish
+document.getElementById('fishGrid').innerHTML = DATA.fish.map(f =>
+  `<div class="fish-card"><div class="fish-icon">${f.emoji}</div><div class="fish-name">${f.name}</div><div class="fish-sci">${f.sci}</div><div class="fish-se">🇸🇪 ${f.se}</div><div style="font-size:.7rem;color:var(--muted);margin-top:4px">${f.desc}</div></div>`
+).join('');
+
+// Costs
+document.getElementById('costTable').innerHTML = `
+  <tr><th>Posten</th><th>Betrag</th></tr>
+  ${DATA.costs.map(c => {
+    if (c.total) return `<tr class="total"><td>${c.item}</td><td>${c.amount}</td></tr>`;
+    if (c.perPerson) return `<tr class="per-person"><td>${c.item}</td><td>${c.amount}</td></tr>`;
+    return `<tr><td>${c.item}</td><td>${c.amount}</td></tr>`;
+  }).join('')}
+  <tr><td style="font-size:.7rem;color:var(--muted);padding-top:4px" colspan="2">* 1.000 SEK ≈ 98€ · Umrechnungsfaktor vom 15.08.2026</td></tr>
+`;
+
+// Packing list (checkbox-based)
+const packGrid = document.getElementById('packGrid');
+const savedPacking = JSON.parse(localStorage.getItem('angel-packing') || '[]');
+DATA.packing.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'pack-item' + (savedPacking.includes(i) ? ' checked' : '');
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = savedPacking.includes(i);
+  cb.addEventListener('change', () => {
+    const saved = JSON.parse(localStorage.getItem('angel-packing') || '[]');
+    if (cb.checked) { saved.push(i); div.classList.add('checked'); }
+    else { const idx = saved.indexOf(i); if(idx>-1) saved.splice(idx,1); div.classList.remove('checked'); }
+    localStorage.setItem('angel-packing', JSON.stringify(saved));
+  });
+  div.appendChild(cb);
+  div.appendChild(document.createTextNode(item));
+  packGrid.appendChild(div);
+});
+</script>
+</body>
+</html>
