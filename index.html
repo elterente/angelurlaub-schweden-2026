@@ -115,8 +115,6 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .settle-reset{background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:inherit;margin-top:6px}
 .settle-reset:hover{border-color:var(--danger);color:var(--danger)}
 </style>
-footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);margin-top:20px}
-footer a{color:var(--water);text-decoration:none}
 </style>
 </head>
 <body>
@@ -125,13 +123,13 @@ footer a{color:var(--water);text-decoration:none}
 <div class="hero-content">
 <h1>🏞️ Åsnen 2026</h1>
 <div class="sub">Schweden Angelurlaub</div>
-<div class="date">05. – 12. September 2026 · Småland</div>
+<div class="date">04. – 12. September 2026 · Småland</div>
 <div class="countdown" id="countdown"></div>
 <div class="tags">
 <span>🎣 Hecht · Zander · Barsch</span>
 <span>🏠 Fålaboda 7</span>
 <span>🚤 Motorboot</span>
-<span>👥 5 Mann</span>
+<span>👥 4 Mann</span>
 </div>
 <a href="#info" class="cta">Zum Plan ↓</a>
 </div>
@@ -283,11 +281,6 @@ footer a{color:var(--water);text-decoration:none}
 <div class="fish-modal" id="fishModalContent"></div>
 </div>
 
-<footer>
-<p>🌲 Angelurlaub Schweden 2026 · See Åsnen · Småland</p>
-<p style="margin-top:4px;font-size:.7rem">Plan von Tadzio · Seite von A.I.D.A. · <a href="https://github.com/elterente/angelurlaub-schweden-2026">GitHub</a></p>
-</footer>
-
 <script>
 // ============================================================
 // TADZIO: ÄNDERE HIER DIE DATEN — KEIN HTML NÖTIG
@@ -295,16 +288,16 @@ footer a{color:var(--water);text-decoration:none}
 const DATA = {
   title: 'Åsnen 2026',
   subtitle: 'Schweden Angelurlaub',
-  dateStart: '2026-09-05',
+  dateStart: '2026-09-04',
   dateEnd: '2026-09-12',
   departDate: '2026-09-04T15:00:00',
   location: 'Fålaboda 7, 362 95 Urshult, Småland, Schweden',
 
   team: [
-    { name: 'Tadzio (Jurek)', role: 'Organisator', emoji: '🧑‍✈️' },
-    { name: 'Hubert', role: 'Mitfahrer', emoji: '🧔' },
-    { name: 'Bartosz (elterente)', role: 'Mitfahrer', emoji: '🙋' },
-    { name: 'Ben', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦱' },
+    { name: 'Tadzio (Jurek)', role: 'Organisator', emoji: '🦁' },
+    { name: 'Hubert', role: 'Mitfahrer', emoji: '🎺' },
+    { name: 'Bartosz (elterente)', role: 'Mitfahrer', emoji: '😈' },
+    { name: 'Ben', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦲' },
   ],
 
   route: [
@@ -462,7 +455,7 @@ function closeFishModal() {
 // ============================
 // AUSGLEICHEN (Settle-Up)
 // ============================
-const SETTLE_NAMES = ['Tadzio (Jurek)', 'Hubert', 'Bartosz', 'Ben'];
+const SETTLE_NAMES = ['Tadzio 🦁', 'Hubert 🎺', 'Bartosz 😈', 'Ben 🧑‍🦲'];
 
 function initSettle() {
   const saved = JSON.parse(localStorage.getItem('angel-settle') || '{}');
