@@ -93,6 +93,27 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .fish-modal .close-btn{position:absolute;top:8px;right:12px;background:rgba(0,0,0,.5);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:.2s}
 .fish-modal .close-btn:hover{background:var(--danger);transform:scale(1.1)}
 .fish-card{cursor:pointer}
+.settle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+.settle-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.settle-card .name{font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.settle-card .input-wrap{position:relative;margin-top:4px}
+.settle-card input{width:100%;padding:6px 8px;background:var(--surface);border:1px solid var(--border);border-radius:5px;color:#fff;font-size:.9rem;font-family:inherit;text-align:center}
+.settle-card input:focus{outline:none;border-color:var(--water)}
+.settle-card .currency{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:.7rem;color:var(--muted)}
+.settle-summary{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:6px}
+.settle-summary h3{font-size:.9rem;color:var(--gold);margin-bottom:8px}
+.settle-summary .stat{display:flex;justify-content:space-between;padding:4px 0;font-size:.8rem;border-bottom:1px solid var(--border)}
+.settle-summary .stat:last-child{border-bottom:none}
+.settle-summary .stat .label{color:var(--muted)}
+.settle-summary .stat .val{color:var(--text);font-weight:600}
+.settle-transfers{margin-top:10px}
+.settle-transfer{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;font-size:.8rem}
+.settle-transfer .arrow{color:var(--gold);font-weight:700;font-size:1rem}
+.settle-transfer .from{color:var(--danger);font-weight:600}
+.settle-transfer .to{color:var(--birch);font-weight:600}
+.settle-transfer .amt{color:var(--gold);font-weight:700;margin-left:auto}
+.settle-reset{background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:inherit;margin-top:6px}
+.settle-reset:hover{border-color:var(--danger);color:var(--danger)}
 </style>
 footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);margin-top:20px}
 footer a{color:var(--water);text-decoration:none}
@@ -124,6 +145,7 @@ footer a{color:var(--water);text-decoration:none}
 <li><a href="#fishing">🎣 Angeln</a></li>
 <li><a href="#map">🗺️ Karte</a></li>
 <li><a href="#costs">💰 Kosten</a></li>
+<li><a href="#settle">🔄 Ausgleichen</a></li>
 <li><a href="#packing">🧳 Packliste</a></li>
 <li><a href="#info">📋 Wichtig</a></li>
 </ul>
@@ -186,6 +208,20 @@ footer a{color:var(--water);text-decoration:none}
 <h2><span class="icon">💰</span> Kosten</h2>
 <div class="card">
 <table class="costs" id="costTable"></table>
+</div>
+</section>
+
+<section class="section" id="settle">
+<h2><span class="icon">🔄</span> Ausgleichen</h2>
+<div class="card">
+<p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">Wer hat was bezahlt? Tragt ein, dann rechnet's aus.</p>
+<div class="settle-grid" id="settleGrid"></div>
+<div class="settle-summary" id="settleSummary">
+<h3>📊 Übersicht</h3>
+<div id="settleStats"></div>
+<div class="settle-transfers" id="settleTransfers"></div>
+</div>
+<button class="settle-reset" onclick="resetSettle()">↻ Zurücksetzen</button>
 </div>
 </section>
 
@@ -422,6 +458,82 @@ function showFishModal(i) {
 function closeFishModal() {
   document.getElementById('fishOverlay').classList.remove('show');
 }
+
+// ============================
+// AUSGLEICHEN (Settle-Up)
+// ============================
+const SETTLE_NAMES = ['Tadzio (Jurek)', 'Hubert', 'Bartosz', 'Ben'];
+
+function initSettle() {
+  const saved = JSON.parse(localStorage.getItem('angel-settle') || '{}');
+  const grid = document.getElementById('settleGrid');
+  grid.innerHTML = SETTLE_NAMES.map(n => `
+    <div class="settle-card">
+      <div class="name">${n}</div>
+      <div class="input-wrap">
+        <span class="currency">€</span>
+        <input type="number" min="0" step="1" value="${saved[n]||''}" placeholder="0" oninput="calcSettle()" data-name="${n}">
+      </div>
+    </div>`
+  ).join('');
+  calcSettle();
+}
+
+function calcSettle() {
+  const inputs = document.querySelectorAll('#settleGrid input');
+  const paid = {};
+  let total = 0, count = 0;
+  inputs.forEach(inp => {
+    const v = parseFloat(inp.value) || 0;
+    paid[inp.dataset.name] = v;
+    total += v;
+    if (v > 0) count++;
+    localStorage.setItem('angel-settle', JSON.stringify(paid));
+  });
+  const avg = count > 0 ? total / count : 0;
+
+  // Stats
+  document.getElementById('settleStats').innerHTML = `
+    <div class="stat"><span class="label">💰 Gesamt ausgegeben</span><span class="val">${total.toFixed(0)} €</span></div>
+    <div class="stat"><span class="label">👥 Pro Person (${count})</span><span class="val">${avg.toFixed(0)} €</span></div>
+  `;
+
+  // Calculate who owes whom (greedy algorithm)
+  let positions = SETTLE_NAMES.map(n => ({ name: n, balance: (paid[n]||0) - avg }));
+  let debtors = positions.filter(p => p.balance < -0.5).sort((a,b) => a.balance - b.balance);
+  let creditors = positions.filter(p => p.balance > 0.5).sort((a,b) => b.balance - a.balance);
+
+  const transfers = document.getElementById('settleTransfers');
+  if (debtors.length === 0 && creditors.length === 0) {
+    transfers.innerHTML = '<div style="color:var(--birch);font-size:.8rem;padding:8px;text-align:center">✅ Alles ausgeglichen!</div>';
+    return;
+  }
+
+  let html = '<h3>💸 Wer schuldet wem</h3>';
+  let di = 0, ci = 0;
+  while (di < debtors.length && ci < creditors.length) {
+    const debt = -debtors[di].balance;
+    const credit = creditors[ci].balance;
+    const amount = Math.min(debt, credit);
+    if (amount > 1) {
+      html += `<div class="settle-transfer"><span class="from">${debtors[di].name}</span> <span class="arrow">→</span> <span class="to">${creditors[ci].name}</span> <span class="amt">${amount.toFixed(0)} €</span></div>`;
+    }
+    debtors[di].balance += amount;
+    creditors[ci].balance -= amount;
+    if (Math.abs(debtors[di].balance) < 0.5) di++;
+    if (Math.abs(creditors[ci].balance) < 0.5) ci++;
+  }
+  transfers.innerHTML = html;
+}
+
+function resetSettle() {
+  if (!confirm('Alle Ausgaben zurücksetzen?')) return;
+  localStorage.removeItem('angel-settle');
+  initSettle();
+}
+
+// Init settle
+initSettle();
 
 // Costs
 document.getElementById('costTable').innerHTML = `
