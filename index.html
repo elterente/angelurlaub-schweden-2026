@@ -117,6 +117,7 @@ footer a{color:var(--water);text-decoration:none}
 <li><a href="#route">🚗 Route</a></li>
 <li><a href="#house">🏠 Haus</a></li>
 <li><a href="#fishing">🎣 Angeln</a></li>
+<li><a href="#map">🗺️ Karte</a></li>
 <li><a href="#costs">💰 Kosten</a></li>
 <li><a href="#packing">🧳 Packliste</a></li>
 <li><a href="#info">📋 Wichtig</a></li>
@@ -213,6 +214,24 @@ footer a{color:var(--water);text-decoration:none}
 <h3>🛒 Einkaufen</h3>
 <p><strong>Tempo Urshult</strong> — Södra Vägen 21A, 9 km entfernt (Lebensmittel)</p>
 <p style="margin-top:4px"><strong>In Tingsryd</strong> — größere Auswahl, inkl. Systembolaget! 🍷</p>
+</div>
+</section>
+
+<section class="section" id="map">
+<h2><span class="icon">🗺️</span> Karte & Route</h2>
+<div class="card">
+<h3>📍 Fålaboda 7 — See Åsnen</h3>
+<div style="border-radius:8px;overflow:hidden;margin-top:8px">
+<iframe src="https://www.google.com/maps?q=F%C3%A5laboda+7+362+95+Urshult+Schweden&output=embed" width="100%" height="350" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+<div style="margin-top:10px;text-align:center">
+<a href="https://www.google.com/maps/dir/Frankfurt+am+Main/M%C3%BCnster/Hamburg+Airport/Puttgarden+F%C3%A4hre/F%C3%A5laboda+7+362+95+Urshult/" target="_blank" class="cta" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">🗺️ Route in Google Maps öffnen</a>
+</div>
+</div>
+<div class="card">
+<h3>🚗 Reisestationen</h3>
+<div id="routeMapList" style="display:flex;flex-direction:column;gap:0;padding:8px 0"></div>
+<p style="font-size:.75rem;color:var(--muted);margin-top:6px">⚠️ Pinkelpausen wurden nicht berechnet!</p>
 </div>
 </section>
 
@@ -323,6 +342,15 @@ document.getElementById('teamGrid').innerHTML = DATA.team.map(m =>
 // Route
 document.getElementById('routeSteps').innerHTML = DATA.route.map(r =>
   `<li><div class="step-icon ${r.icon}">${r.icon==='ferry'?'⛴️':'🚗'}</div><div class="step-content"><strong>${r.time} — ${r.place}</strong><span>${r.desc}</span></div></li>`
+).join('');
+
+// Route stations (in Karte-Sektion)
+document.getElementById('routeMapList').innerHTML = DATA.route.map(r =>
+  `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem">
+    <div style="width:24px;height:24px;border-radius:50%;background:${r.icon==='ferry'?'var(--gold)':'var(--birch)'};display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">${r.icon==='ferry'?'⛴️':'🚗'}</div>
+    <div style="flex:1"><strong style="color:var(--text)">${r.place}</strong> <span style="color:var(--muted)">${r.desc}</span></div>
+    <div style="color:var(--water);font-weight:600;font-size:.7rem;flex-shrink:0">${r.time}</div>
+  </div>`
 ).join('');
 
 // Fish
