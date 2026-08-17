@@ -78,17 +78,22 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .fish-card .fish-sci{font-size:.7rem;color:var(--muted);font-style:italic}
 .fish-card .fish-se{font-size:.7rem;color:var(--water);margin-top:2px}
 
-.important-box{background:rgba(231,111,111,.08);border:1px solid var(--danger);border-radius:10px;padding:20px;margin-top:10px}
-.important-box h3{color:var(--danger);margin-bottom:10px}
-.important-box ul{list-style:none;padding:0}
-.important-box ul li{padding:4px 0;font-size:.85rem;color:var(--muted)}
-.important-box ul li::before{content:'⚠️ '}
-
-.rules-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:10px}
-.rules-box h3{color:var(--gold);margin-bottom:10px}
-.rules-box ul{list-style:none;padding:0}
-.rules-box ul li{padding:3px 0;font-size:.82rem;color:var(--muted)}
-
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:100;justify-content:center;align-items:center;padding:20px}
+.overlay.show{display:flex}
+.fish-modal{background:var(--surface);border:1px solid var(--water);border-radius:12px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:0;position:relative}
+.fish-modal img{width:100%;height:200px;object-fit:cover;border-radius:12px 12px 0 0;display:block}
+.fish-modal .body{padding:16px 20px 20px}
+.fish-modal h3{font-size:1.2rem;color:var(--gold);margin-bottom:4px}
+.fish-modal .sci{font-style:italic;color:var(--muted);font-size:.8rem;margin-bottom:12px}
+.fish-modal .desc{font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:12px}
+.fish-modal .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.fish-modal .info-item{background:var(--bg);padding:8px 10px;border-radius:6px;font-size:.75rem}
+.fish-modal .info-item strong{display:block;color:var(--water);font-size:.7rem;margin-bottom:2px}
+.fish-modal .info-item span{color:var(--muted)}
+.fish-modal .close-btn{position:absolute;top:8px;right:12px;background:rgba(0,0,0,.5);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.fish-modal .close-btn:hover{background:var(--danger);transform:scale(1.1)}
+.fish-card{cursor:pointer}
+</style>
 footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);margin-top:20px}
 footer a{color:var(--water);text-decoration:none}
 </style>
@@ -235,6 +240,10 @@ footer a{color:var(--water);text-decoration:none}
 </div>
 </section>
 
+<div class="overlay" id="fishOverlay" onclick="if(event.target===this)closeFishModal()">
+<div class="fish-modal" id="fishModalContent"></div>
+</div>
+
 <footer>
 <p>🌲 Angelurlaub Schweden 2026 · See Åsnen · Småland</p>
 <p style="margin-top:4px;font-size:.7rem">Plan von Tadzio · Seite von A.I.D.A. · <a href="https://github.com/elterente/angelurlaub-schweden-2026">GitHub</a></p>
@@ -270,10 +279,34 @@ const DATA = {
   ],
 
   fish: [
-    { name: 'Hecht', sci: 'Esox lucius', se: 'Gädda', emoji: '🐊', desc: 'König des Åsnen! Dichte Bestände, Riesen über 100 cm möglich.' },
-    { name: 'Zander', sci: 'Sander lucioperca', se: 'Gös', emoji: '👁️', desc: 'Sehr begehrt. Perfekt vertikal oder schleppend in den Rinnen.' },
-    { name: 'Barsch', sci: 'Perca fluviatilis', se: 'Aborre', emoji: '🐟', desc: 'Dicke Kerle (30–40+ cm) an Felsen und Steilküsten.' },
-    { name: 'Schleie', sci: 'Tinca tinca', se: 'Sutare', emoji: '🐠', desc: 'Auch Friedfische kommen nicht zu kurz.' },
+    { name: 'Hecht', sci: 'Esox lucius', se: 'Gädda', emoji: '🐊', desc: 'König des Åsnen! Dichte Bestände, Riesen über 100 cm möglich.',
+      detail: 'Der Hecht ist der unangefochtene Herrscher des Åsnen. Mit seinem langgestreckten Körper und dem schnabelartigen Maul ist er ein perfekter Lauerjäger. Die vielen Flachwasserzonen und Krautfelder bieten ideale Bedingungen. Im Sommer halten sich Hechte gerne in den Schilfkanten und um die tausenden Inseln auf. Im Herbst gehen sie in die tieferen Rinnen.',
+      methods: 'Spinnfischen (30g+ Köder), Jerken, Schleppangeln mit Tiefenläufern',
+      bait: 'Gummifische (20-30cm), Spinner, Wobbler, tote Fische auf Montage',
+      season: 'Mai–Oktober (beste Zeit: September/Oktober)',
+      bestSpot: 'Flache Buchten, Krautfelder, Schilfkanten, um die Inseln',
+      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Esox_lucius1.jpg/400px-Esox_lucius1.jpg' },
+    { name: 'Zander', sci: 'Sander lucioperca', se: 'Gös', emoji: '👁️', desc: 'Sehr begehrt. Perfekt vertikal oder schleppend in den Rinnen.',
+      detail: 'Der Zander ist der heimliche Star des Åsnen. Mit seinen nachtaktiven Augen und dem schlanken Körper ist er ein perfekter Jäger in der Dämmerung. Die tiefen Rinnen und Strukturen des Sees bieten ihm ideale Jagdgründe. Zander werden oft über 80 cm lang und sind für ihren delikaten Geschmack bekannt.',
+      methods: 'Vertikalangeln, Drop-Shot, Schleppangeln mit Tiefenläufern, Jiggen',
+      bait: 'Gummifische (7-12cm) in natürlichen Farben, kleine Wobbler, Köderfisch-Imitationen',
+      season: 'Juni–September (beste Zeit: August/September)',
+      bestSpot: 'Tiefere Rinnen, um Inseln, Unterwasser-Strukturen, 5-10m Tiefe',
+      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sander_lucioperca_Zander.jpg/400px-Sander_lucioperca_Zander.jpg' },
+    { name: 'Barsch', sci: 'Perca fluviatilis', se: 'Aborre', emoji: '🐟', desc: 'Dicke Kerle (30–40+ cm) an Felsen und Steilküsten.',
+      detail: 'Der Barsch ist der Allrounder im Åsnen. Die typischen "Kirschen" mit den gestreiften Flanken werden hier oft über 40 cm groß. Barsche jagen in Schwärmen und sind besonders in den Morgen- und Abendstunden aktiv. Im Sommer stehen sie gerne an felsigen Ufern und Steilküsten.',
+      methods: 'Spinnfischen (leichte Rute), Drop-Shot, Twitch-Jiggen, Zander-Rig',
+      bait: 'Gummifische (5-8cm), kleine Spinner, Crankbaits, Würmer',
+      season: 'Mai–Oktober (beste Zeit: Juni–August)',
+      bestSpot: 'Felsige Ufer, Steilküsten, Krautfelder, flache Buchten mit 2-5m Tiefe',
+      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Flussbarsch_Perca_fluviatilis.jpg/400px-Flussbarsch_Perca_fluviatilis.jpg' },
+    { name: 'Schleie', sci: 'Tinca tinca', se: 'Sutare', emoji: '🐠', desc: 'Auch Friedfische kommen nicht zu kurz.',
+      detail: 'Die Schleie ist der Geheimtipp für Friedfischangler. Der goldgrün schimmernde Fisch hält sich gerne in verkrauteten Buchten und Schlammzonen auf. Schleien werden oft 30-50 cm groß und sind für ihren festen, wohlschmeckenden Fisch bekannt.',
+      methods: 'Grundangeln, Posenangeln, Feedern mit Naturködern',
+      bait: 'Mais, Made, Wurm, Boilies, Brotflocken',
+      season: 'Mai–September (beste Zeit: warme Sommermonate)',
+      bestSpot: 'Verkrautete Buchten, Schlammzonen, flache Bereiche mit 1-3m Tiefe',
+      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tinca_tinca.jpeg/400px-Tinca_tinca.jpeg' },
   ],
 
   costs: [
@@ -353,10 +386,39 @@ document.getElementById('routeMapList').innerHTML = DATA.route.map(r =>
   </div>`
 ).join('');
 
-// Fish
-document.getElementById('fishGrid').innerHTML = DATA.fish.map(f =>
-  `<div class="fish-card"><div class="fish-icon">${f.emoji}</div><div class="fish-name">${f.name}</div><div class="fish-sci">${f.sci}</div><div class="fish-se">🇸🇪 ${f.se}</div><div style="font-size:.7rem;color:var(--muted);margin-top:4px">${f.desc}</div></div>`
+// Fish (klickbar → Modal)
+document.getElementById('fishGrid').innerHTML = DATA.fish.map((f, i) =>
+  `<div class="fish-card" onclick="showFishModal(${i})">
+    <div class="fish-icon">${f.emoji}</div>
+    <div class="fish-name">${f.name}</div>
+    <div class="fish-sci">${f.sci}</div>
+    <div class="fish-se">🇸🇪 ${f.se}</div>
+    <div style="font-size:.7rem;color:var(--muted);margin-top:4px">${f.desc}</div>
+  </div>`
 ).join('');
+
+// Fish Modal
+function showFishModal(i) {
+  let f = DATA.fish[i];
+  document.getElementById('fishModalContent').innerHTML = `
+    <button class="close-btn" onclick="closeFishModal()">✕</button>
+    <img src="${f.img}" alt="${f.name}" loading="lazy" onerror="this.style.display='none'">
+    <div class="body">
+      <h3>${f.emoji} ${f.name} (${f.se})</h3>
+      <div class="sci">${f.sci}</div>
+      <div class="desc">${f.detail}</div>
+      <div class="info-grid">
+        <div class="info-item"><strong>🎣 Methode</strong><span>${f.methods}</span></div>
+        <div class="info-item"><strong>🪱 Köder</strong><span>${f.bait}</span></div>
+        <div class="info-item"><strong>📅 Saison</strong><span>${f.season}</span></div>
+        <div class="info-item"><strong>📍 Beste Spots</strong><span>${f.bestSpot}</span></div>
+      </div>
+    </div>`;
+  document.getElementById('fishOverlay').classList.add('show');
+}
+function closeFishModal() {
+  document.getElementById('fishOverlay').classList.remove('show');
+}
 
 // Costs
 document.getElementById('costTable').innerHTML = `
