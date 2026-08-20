@@ -114,10 +114,61 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .settle-transfer .amt{color:var(--gold);font-weight:700;margin-left:auto}
 .settle-reset{background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:inherit;margin-top:6px}
 .settle-reset:hover{border-color:var(--danger);color:var(--danger)}
-</style>
+
+/* Login Overlay */
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;transition:opacity .4s}
+.login-overlay.hidden{opacity:0;pointer-events:none}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:30px;width:100%;max-width:360px;text-align:center}
+.login-box h1{font-size:1.8rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.login-box .sub{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+.login-box label{display:block;text-align:left;font-size:.75rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+.login-box select,.login-box input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;margin-bottom:14px;outline:none;transition:.2s}
+.login-box select:focus,.login-box input:focus{border-color:var(--gold)}
+.login-box select option{background:var(--surface);color:var(--text)}
+.login-btn{background:var(--birch);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;transition:.2s}
+.login-btn:hover{background:var(--water);transform:translateY(-2px)}
+.login-error{color:var(--danger);font-size:.75rem;margin-top:8px;display:none}
+.login-greeting{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.8rem;color:var(--muted);white-space:nowrap}
+.login-greeting span{color:var(--gold);font-weight:600}
+.logout-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:.7rem;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
+.logout-btn:hover{color:var(--danger);border-color:var(--danger)}
 </style>
 </head>
 <body>
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h1>🏞️ Åsnen 2026</h1>
+    <div class="sub">Schweden Angelurlaub · Privat</div>
+    <label for="loginName">Dein Name</label>
+    <select id="loginName">
+      <option value="">— wählen —</option>
+      <option value="Tadzio 🦁">Tadzio 🦁</option>
+      <option value="Hubcio 🎺">Hubcio 🎺</option>
+      <option value="elterente 😈">elterente 😈</option>
+      <option value="Benzo 🧑‍🦲">Benzo 🧑‍🦲</option>
+    </select>
+    <label for="loginPass">Passwort</label>
+    <input type="password" id="loginPass" placeholder="Passwort eingeben" autocomplete="off" onkeydown="if(event.key==='Enter')handleLogin()">
+    <button class="login-btn" onclick="handleLogin()">🔓 Eintreten</button>
+    <div class="login-error" id="loginError">❌ Falscher Name oder Passwort.</div>
+  </div>
+</div>
+
+<nav id="nav">
+<ul>
+<li><a href="#team">👥 Team</a></li>
+<li><a href="#route">🚗 Route</a></li>
+<li><a href="#house">🏠 Haus</a></li>
+<li><a href="#fishing">🎣 Angeln</a></li>
+<li><a href="#map">🗺️ Karte</a></li>
+<li><a href="#settle">🔄 Ausgleichen</a></li>
+<li><a href="#packing">🧳 Packliste</a></li>
+<li><a href="#info">📋 Infos</a></li>
+<li id="loginNavItem" style="display:none"></li>
+</ul>
+</nav>
+
 <div class="hero">
 <div class="hero-bg"><div class="waves"></div></div>
 <div class="hero-content">
@@ -134,20 +185,6 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <a href="#info" class="cta">Zum Plan ↓</a>
 </div>
 </div>
-
-<nav id="nav">
-<ul>
-<li><a href="#team">👥 Team</a></li>
-<li><a href="#route">🚗 Route</a></li>
-<li><a href="#house">🏠 Haus</a></li>
-<li><a href="#fishing">🎣 Angeln</a></li>
-<li><a href="#map">🗺️ Karte</a></li>
-<li><a href="#costs">💰 Kosten</a></li>
-<li><a href="#settle">🔄 Ausgleichen</a></li>
-<li><a href="#packing">🧳 Packliste</a></li>
-<li><a href="#info">📋 Wichtig</a></li>
-</ul>
-</nav>
 
 <section class="section" id="team">
 <h2><span class="icon">👥</span> Team</h2>
@@ -373,6 +410,39 @@ const DATA = {
     '📷 Kamera / GoPro',
   ],
 };
+
+// Login
+const LOGIN_PW = 'Asnen2026!';
+const LOGIN_NAMES = ['Tadzio 🦁', 'Hubcio 🎺', 'elterente 😈', 'Benzo 🧑‍🦲'];
+
+function handleLogin() {
+  const name = document.getElementById('loginName').value;
+  const pw = document.getElementById('loginPass').value;
+  if (!name || !pw) return;
+  if (!LOGIN_NAMES.includes(name) || pw !== LOGIN_PW) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  localStorage.setItem('angel-login', JSON.stringify({name, at: Date.now()}));
+  document.getElementById('loginOverlay').classList.add('hidden');
+}
+
+function doLogout() {
+  localStorage.removeItem('angel-login');
+  location.reload();
+}
+
+(function() {
+  const saved = JSON.parse(localStorage.getItem('angel-login') || 'null');
+  if (saved && saved.name) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    const li = document.getElementById('loginNavItem');
+    if (li) {
+      li.style.display = 'list-item';
+      li.innerHTML = '<span class="login-greeting">👤 <span>' + saved.name + '</span> <button class="logout-btn" onclick="doLogout()">✕</button></span>';
+    }
+  }
+})();
 
 // ============================================================
 // RENDER-FUNKTIONEN
