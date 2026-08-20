@@ -41,7 +41,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .card ul li::before{content:'▸ ';color:var(--birch)}
 .card ul li{margin-bottom:4px;font-size:.85rem;color:var(--muted)}
 
-.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-top:10px}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:10px}
 .team-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:.2s}
 .team-card:hover{border-color:var(--birch);transform:translateY(-2px)}
 .team-card .avatar{font-size:2.5rem;margin-bottom:6px}
@@ -134,6 +134,10 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .logout-btn:hover{color:var(--danger);border-color:var(--danger)}
 .nm-btn{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:.75rem;text-decoration:none;transition:.2s;font-family:'Inter',sans-serif}
 .nm-btn:hover{background:var(--water);color:#fff;border-color:var(--water);transform:translateY(-1px)}
+.house-img-wrap{position:relative;border-radius:10px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border)}
+.house-img{width:100%;height:240px;object-fit:cover;display:block;transition:transform .3s}
+.house-img-wrap:hover .house-img{transform:scale(1.15)}
+.house-img-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.9));padding:30px 16px 10px;font-size:.75rem;color:var(--gold);font-weight:500;letter-spacing:.5px}
 </style>
 </head>
 <body>
@@ -208,6 +212,10 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 
 <section class="section" id="house">
 <h2><span class="icon">🏠</span> Unterkunft</h2>
+<div class="house-img-wrap">
+<img src="falaboda-haus.jpg" alt="Fålaboda 7 am Åsnen-See" class="house-img">
+<div class="house-img-label">🏡 Fålaboda 7 — direkt am Åsnen-See</div>
+</div>
 <div class="card">
 <h3>Fålaboda 7 — See Åsnen</h3>
 <p>Vermieter: Barbara Diekamp · Fålaboda 7, 362 95 Urshult</p>
@@ -310,10 +318,10 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <div class="card">
 <h3>📍 Fålaboda 7 — See Åsnen</h3>
 <div style="border-radius:8px;overflow:hidden;margin-top:8px">
-<iframe src="https://www.google.com/maps?q=F%C3%A5laboda+7+362+95+Urshult+Schweden&output=embed" width="100%" height="350" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<iframe src="https://www.google.com/maps?q=56.56618756941794,14.769841801134605&output=embed" width="100%" height="350" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 <div style="margin-top:10px;text-align:center">
-<a href="https://www.google.com/maps/dir/Frankfurt+am+Main/M%C3%BCnster/Hamburg+Airport/Puttgarden+F%C3%A4hre/F%C3%A5laboda+7+362+95+Urshult/" target="_blank" class="cta" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">🗺️ Route in Google Maps öffnen</a>
+<a href="https://www.google.com/maps/dir/Frankfurt+am+Main/M%C3%BCnster/Hamburg+Airport/Puttgarden+F%C3%A4hre/56.56618756941794,14.769841801134605/" target="_blank" class="cta" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">🗺️ Route in Google Maps öffnen</a>
 </div>
 </div>
 <div class="card">
