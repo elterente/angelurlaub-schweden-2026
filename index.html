@@ -295,14 +295,14 @@ const DATA = {
 
   team: [
     { name: 'Tadzio', role: 'Organisator', emoji: '🦁' },
-    { name: 'Hubert', role: 'Mitfahrer', emoji: '🎺' },
+    { name: 'Hubcio', role: 'Mitfahrer', emoji: '🎺' },
     { name: 'elterente', role: 'Mitfahrer', emoji: '😈' },
-    { name: 'Ben', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦲' },
+    { name: 'Benzo', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦲' },
   ],
 
   route: [
-    { time: '15:00', place: 'Frankfurt → Münster', desc: 'Start ab Frankfurt, 300 km, 3h. Hubert abholen.', icon: 'dep' },
-    { time: '19:00', place: 'Münster → Hamburg Airport', desc: '290 km, 3h. Ben abholen (Ankunft 22 Uhr).', icon: 'dep' },
+    { time: '15:00', place: 'Frankfurt → Münster', desc: 'Start ab Frankfurt, 300 km, 3h. Hubcio abholen.', icon: 'dep' },
+    { time: '19:00', place: 'Münster → Hamburg Airport', desc: '290 km, 3h. Benzo abholen (Ankunft 22 Uhr).', icon: 'dep' },
     { time: '22:30', place: 'Hamburg → Puttgarden', desc: '150 km, Ankunft ca. 01:00 Uhr.', icon: 'dep' },
     { time: '01:00', place: 'Fähre Puttgarden → Rødbyhavn', desc: 'Scandlines-Fähre, 1h 40min Überfahrt.', icon: 'ferry' },
     { time: '03:00', place: 'Rødbyhavn → Kopenhagen → Malmö', desc: '200 km über Öresundbrücke, Ankunft Malmö ca. 05:30.', icon: 'dep' },
@@ -455,7 +455,7 @@ function closeFishModal() {
 // ============================
 // AUSGLEICHEN (Settle-Up)
 // ============================
-const SETTLE_NAMES = ['Tadzio 🦁', 'Hubert 🎺', 'elterente 😈', 'Ben 🧑‍🦲'];
+const SETTLE_NAMES = ['Tadzio 🦁', 'Hubcio 🎺', 'elterente 😈', 'Benzo 🧑‍🦲'];
 
 function initSettle() {
   const saved = JSON.parse(localStorage.getItem('angel-settle') || '{}');
