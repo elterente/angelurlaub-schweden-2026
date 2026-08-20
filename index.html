@@ -294,9 +294,9 @@ const DATA = {
   location: 'Fålaboda 7, 362 95 Urshult, Småland, Schweden',
 
   team: [
-    { name: 'Tadzio (Jurek)', role: 'Organisator', emoji: '🦁' },
+    { name: 'Tadzio', role: 'Organisator', emoji: '🦁' },
     { name: 'Hubert', role: 'Mitfahrer', emoji: '🎺' },
-    { name: 'Bartosz (elterente)', role: 'Mitfahrer', emoji: '😈' },
+    { name: 'elterente', role: 'Mitfahrer', emoji: '😈' },
     { name: 'Ben', role: 'Mitfahrer (Hamburg)', emoji: '🧑‍🦲' },
   ],
 
@@ -455,7 +455,7 @@ function closeFishModal() {
 // ============================
 // AUSGLEICHEN (Settle-Up)
 // ============================
-const SETTLE_NAMES = ['Tadzio 🦁', 'Hubert 🎺', 'Bartosz 😈', 'Ben 🧑‍🦲'];
+const SETTLE_NAMES = ['Tadzio 🦁', 'Hubert 🎺', 'elterente 😈', 'Ben 🧑‍🦲'];
 
 function initSettle() {
   const saved = JSON.parse(localStorage.getItem('angel-settle') || '{}');
