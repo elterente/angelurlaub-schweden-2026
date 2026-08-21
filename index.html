@@ -258,7 +258,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .flight-radar{margin-top:12px;border-radius:8px;overflow:hidden;display:none}
 .flight-radar.show{display:block}
-.flight-radar iframe{width:100%;height:300px;border:0}
+.flight-radar iframe{width:100%;height:360px;border:0}
 .flight-live-data{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
 .flight-live-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center}
 .flight-live-item .live-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
@@ -1187,9 +1187,10 @@ function swapCurrency() {
 loadFxRate();
 
 // ============================
-// ✈️ FLUG-TRACKER (Live via OpenSky API)
+// ✈️ FLUG-TRACKER (FR24 Embed + OpenSky Telemetry)
 // ============================
 let flightRefreshTimer = null;
+let currentTrackedFlight = null;
 
 // IATA → ICAO airline code mapping
 const ICAO_MAP = {
@@ -1210,106 +1211,86 @@ function buildCallsigns(flightNum) {
   const num = match[2];
   const icao = ICAO_MAP[iata] || iata;
   const results = [];
-  if (icao && icao !== iata) results.push(icao + num);  // DLH1234
-  if (iata) results.push(iata + num);                     // LH1234
-  results.push(flightNum);                                // raw input
+  if (icao && icao !== iata) results.push(icao + num);
+  if (iata) results.push(iata + num);
+  results.push(flightNum);
   return results;
 }
 
-async function queryOpenSky(callsigns) {
-  // OpenSky free API ignores callsign filter — returns ALL flights.
-  // We fetch once and filter client-side by matching callsign (trimmed).
-  try {
-    const url = 'https://opensky-network.org/api/states/all?time=0';
-    const res = await fetch(url, {signal: AbortSignal.timeout(15000)});
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data.states || data.states.length === 0) return null;
-
-    // Normalize target callsigns for matching (trim + uppercase)
-    const targets = new Set(callsigns.map(c => c.trim().toUpperCase()));
-
-    // Find the first state whose callsign matches any target
-    for (const s of data.states) {
-      const cs = (s[1] || '').trim().toUpperCase();
-      // Match: exact callsign OR callsign starts with target (e.g. "LOT380" matches "LOT380 ")
-      const matched = [...targets].some(t => cs === t || cs.startsWith(t));
-      if (matched) {
-        return {
-          callsign: (s[1] || '').trim(),
-          icao24: s[0],
-          country: s[2],
-          lon: s[5], lat: s[6],
-          baroAlt: s[7] != null ? Math.round(s[7]) : null,
-          velocity: s[9] != null ? Math.round(s[9] * 3.6) : null,
-          heading: s[10] != null ? Math.round(s[10]) : null,
-          onGround: s[8],
-          lastContact: s[4],
-          totalFlights: data.states.length,
-        };
-      }
-    }
-  } catch(e) { /* fall through */ }
-  return null;
-}
-
-function displayLiveFlight(data, flightNum) {
-  document.getElementById('flightNumDisp').textContent = data.callsign || flightNum;
-
-  const fd = DATA.flightData;
-  const routeInfo = fd.number && fd.number.toUpperCase() === flightNum.toUpperCase()
-    ? `${fd.departure || '???'} ✈️ ${fd.arrival || '???'}`
-    : `${flightNum}`;
-  document.getElementById('flightRoute').textContent = data.country
-    ? `${routeInfo} · 🌍 Über ${data.country}`
-    : `📍 Live getrackt aus ${data.totalFlights?.toLocaleString() || '?'} Flügen`;
-
-  const status = data.onGround ? 'Gelandet ✅' : 'In der Luft ✈️';
-  const statusClass = data.onGround ? 'landed' : 'airborne';
-  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot ${statusClass}"></span>${status}`;
-
-  // Countdown card
-  const alt = data.baroAlt !== null ? `${data.baroAlt}m` : '? m';
-  const spd = data.velocity !== null ? `${data.velocity} km/h` : '? km/h';
-  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${alt}</div><div class="cd-label">Höhe</div>`;
-
-  // Live data grid
-  const hdg = data.heading !== null ? `${data.heading}° ${headingToCardinal(data.heading)}` : '?';
-  document.getElementById('flightLiveData').style.display = 'grid';
-  document.getElementById('flightLiveData').innerHTML = `
-    <div class="flight-live-item"><div class="live-label">📏 Höhe</div><div class="live-val">${alt}</div></div>
-    <div class="flight-live-item"><div class="live-label">🚀 Geschwindigkeit</div><div class="live-val">${spd}</div></div>
-    <div class="flight-live-item"><div class="live-label">🧭 Kurs</div><div class="live-val">${hdg}</div></div>
-    <div class="flight-live-item"><div class="live-label">📍 Position</div><div class="live-val">${data.lat?.toFixed(3)}°, ${data.lon?.toFixed(3)}°</div></div>
-    <div class="flight-live-item"><div class="live-label">🛬 Am Boden</div><div class="live-val">${data.onGround ? 'Ja' : 'Nein'}</div></div>
-    <div class="flight-live-item"><div class="live-label">🕐 Letzter Kontakt</div><div class="live-val">${timeAgo(data.lastContact)}</div></div>
-  `;
-
-  // FR24 embed
+function showFR24Embed(flightNum) {
   const radar = document.getElementById('flightRadar');
   const frame = document.getElementById('fr24Frame');
   radar.classList.add('show');
-  frame.src = `https://www.flightradar24.com/simple_index.php?lat=${data.lat}&lon=${data.lon}&reg=${data.callsign}`;
-
-  // FR24 link
-  const fr24 = document.getElementById('fr24Link');
-  fr24.href = `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}`;
-  fr24.style.opacity = '1';
-  fr24.style.pointerEvents = 'auto';
+  // FR24 simple iframe embed — always works, no CORS issues
+  frame.src = 'https://www.flightradar24.com/simple_index.php?lat=52.5&lon=13.4&reg=' + encodeURIComponent(flightNum);
 }
 
-function showFlightNotFound(flightNum) {
-  document.getElementById('flightNumDisp').textContent = flightNum || '—';
-  document.getElementById('flightRoute').textContent = '🔍 Kein Live-Flug gefunden';
-  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot unknown"></span>Nicht in der Luft`;
-  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">🔍</div><div class="cd-label">Kein Signal</div>`;
-  document.getElementById('flightLiveData').style.display = 'none';
-  document.getElementById('flightRadar').classList.remove('show');
+async function tryOpenSkyTelemetry(flightNum) {
+  const liveDiv = document.getElementById('flightLiveData');
+  liveDiv.style.display = 'grid';
+  liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
+    <div class="live-label">🔍 OpenSky-Telemetrie</div>
+    <div class="live-val" style="font-size:.8rem;color:var(--muted)">Suche Live-Daten…</div>
+  </div>`;
 
-  const fr24 = document.getElementById('fr24Link');
-  fr24.href = flightNum ? `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}` : '#';
-  fr24.style.opacity = flightNum ? '1' : '.4';
-  fr24.style.pointerEvents = flightNum ? 'auto' : 'none';
+  try {
+    const callsigns = buildCallsigns(flightNum);
+    const url = 'https://opensky-network.org/api/states/all?time=0';
+    const res = await fetch(url, {signal: AbortSignal.timeout(15000)});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.states || data.states.length === 0) throw new Error('empty');
+
+    const targets = new Set(callsigns.map(c => c.trim().toUpperCase()));
+    for (const s of data.states) {
+      const cs = (s[1] || '').trim().toUpperCase();
+      const matched = [...targets].some(t => cs === t || cs.startsWith(t));
+      if (matched) {
+        // Found! Show telemetry
+        const alt = s[7] != null ? Math.round(s[7]) : null;
+        const spd = s[9] != null ? Math.round(s[9] * 3.6) : null;
+        const hdg = s[10] != null ? Math.round(s[10]) : null;
+        const hdgStr = hdg !== null ? `${hdg}° ${headingToCardinal(hdg)}` : '?';
+
+        liveDiv.style.display = 'grid';
+        liveDiv.innerHTML = `
+          <div class="flight-live-item"><div class="live-label">📏 Höhe</div><div class="live-val">${alt !== null ? alt+'m' : '? m'}</div></div>
+          <div class="flight-live-item"><div class="live-label">🚀 Geschw.</div><div class="live-val">${spd !== null ? spd+' km/h' : '? km/h'}</div></div>
+          <div class="flight-live-item"><div class="live-label">🧭 Kurs</div><div class="live-val">${hdgStr}</div></div>
+          <div class="flight-live-item"><div class="live-label">📍 Position</div><div class="live-val">${s[6]?.toFixed(3)}°, ${s[5]?.toFixed(3)}°</div></div>
+          <div class="flight-live-item"><div class="live-label">🛬 Status</div><div class="live-val">${s[8] ? 'Am Boden' : 'In der Luft ✈️'}</div></div>
+          <div class="flight-live-item"><div class="live-label">🕐 Kontakt</div><div class="live-val">${timeAgo(s[4])}</div></div>
+        `;
+
+        // Update name and route
+        document.getElementById('flightNumDisp').textContent = (s[1] || flightNum).trim();
+        document.getElementById('flightRoute').textContent = `🌍 Über ${s[2]} · OpenSky Live`;
+        const dotClass = s[8] ? 'landed' : 'airborne';
+        document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot ${dotClass}"></span>${s[8] ? 'Gelandet ✅' : 'In der Luft ✈️'}`;
+        document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${alt !== null ? alt+'m' : '?'}</div><div class="cd-label">Höhe (OpenSky)</div>`;
+
+        // Also update FR24 to focus on position
+        if (s[6] != null && s[5] != null) {
+          document.getElementById('fr24Frame').src = `https://www.flightradar24.com/simple_index.php?lat=${s[6]}&lon=${s[5]}&reg=${encodeURIComponent((s[1]||'').trim())}`;
+        }
+
+        return true; // success
+      }
+    }
+    // Not in dataset
+    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
+      <div class="live-label">📡 OpenSky</div>
+      <div class="live-val" style="font-size:.8rem;color:var(--amber)">Flug nicht im OpenSky-Netzwerk — aber FR24-Radar ist live ↓</div>
+    </div>`;
+    return false;
+  } catch(e) {
+    // CORS or network error
+    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
+      <div class="live-label">📡 OpenSky</div>
+      <div class="live-val" style="font-size:.8rem;color:var(--amber)">OpenSky blockiert Cross-Origin-Requests. Telemetrie nur im FR24-Radar ↓</div>
+    </div>`;
+    return false;
+  }
 }
 
 async function trackFlight() {
@@ -1317,49 +1298,47 @@ async function trackFlight() {
   if (!input) return;
 
   const flightNum = input.toUpperCase();
+  currentTrackedFlight = flightNum;
   const btn = document.getElementById('trackBtn');
 
-  btn.textContent = '🔍 Suche...';
+  btn.textContent = '🔍 Suche…';
   btn.classList.add('tracking');
   btn.disabled = true;
 
   // Save
   saveFlightNum(flightNum);
 
-  const callsigns = buildCallsigns(flightNum);
-  const live = await queryOpenSky(callsigns);
+  // 1. Show flight info immediately
+  document.getElementById('flightNumDisp').textContent = flightNum;
+  document.getElementById('flightRoute').textContent = '📡 Tracking aktiv';
+  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Live-Tracking läuft`;
+  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">📡</div><div class="cd-label">Tracking</div>`;
 
-  if (live) {
-    displayLiveFlight(live, flightNum);
-    startAutoRefresh(flightNum);
-  } else {
-    document.getElementById('flightLiveData').style.display = 'none';
-    document.getElementById('flightRadar').classList.remove('show');
-    document.getElementById('flightNumDisp').textContent = flightNum;
-    document.getElementById('flightRoute').textContent = '🔍 Nicht im OpenSky-Netzwerk gefunden';
-    document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot unknown"></span>Nicht im freien Netzwerk sichtbar`;
-    document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">🔍</div><div class="cd-label">Nicht gefunden</div>`;
-    // Show small note that FR24 still works
-    const liveDiv = document.getElementById('flightLiveData');
-    liveDiv.style.display = 'grid';
-    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1"><div class="live-label">💡 Tipp</div><div class="live-val" style="font-size:.8rem;color:var(--muted)">OpenSky zeigt nur Flüge mit öffentlichem Transponder-Signal. Öffne FlightRadar24 für volle Abdeckung.</div></div>`;
-    stopAutoRefresh();
-  }
+  // 2. ALWAYS show FR24 embed (no CORS, always works)
+  showFR24Embed(flightNum);
+
+  // 3. FR24 external link
+  const fr24 = document.getElementById('fr24Link');
+  fr24.href = `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}`;
+  fr24.style.opacity = '1';
+  fr24.style.pointerEvents = 'auto';
+
+  // 4. Try OpenSky telemetry as bonus
+  await tryOpenSkyTelemetry(flightNum);
 
   btn.textContent = '📡 Tracken';
   btn.classList.remove('tracking');
   btn.disabled = false;
+
+  // Auto-refresh OpenSky every 45s
+  startAutoRefresh(flightNum);
 }
 
 function startAutoRefresh(flightNum) {
   stopAutoRefresh();
   flightRefreshTimer = setInterval(async () => {
-    const callsigns = buildCallsigns(flightNum);
-    const live = await queryOpenSky(callsigns);
-    if (live) {
-      displayLiveFlight(live, flightNum);
-    }
-  }, 30000); // refresh every 30s
+    await tryOpenSkyTelemetry(flightNum);
+  }, 45000);
 }
 
 function stopAutoRefresh() {
@@ -1392,7 +1371,7 @@ function saveFlightNum(val) {
   }));
 }
 
-// Init: load saved flight & show status (no auto-track)
+// Init: load saved flight & show ready state
 (function initFlight() {
   const saved = JSON.parse(localStorage.getItem('angel-flight') || '{}');
   if (saved.number) {
