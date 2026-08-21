@@ -115,6 +115,25 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .settle-reset{background:var(--surface);color:var(--muted);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.75rem;font-family:inherit;margin-top:6px}
 .settle-reset:hover{border-color:var(--danger);color:var(--danger)}
 
+/* Weather */
+.weather-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:10px}
+.weather-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;transition:.2s;cursor:default}
+.weather-card.today{border-color:var(--gold);box-shadow:0 0 8px rgba(230,184,94,.15)}
+.weather-card .wday{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.weather-card .wdate{font-size:.65rem;color:var(--muted);margin-bottom:6px}
+.weather-card .wicon{font-size:2rem;margin-bottom:4px}
+.weather-card .wtemp{font-size:1.1rem;font-weight:700;color:var(--text)}
+.weather-card .wtemp .low{color:var(--water);font-weight:400;font-size:.85rem}
+.weather-card .wdetail{display:flex;justify-content:center;gap:10px;margin-top:6px;font-size:.7rem;color:var(--muted)}
+.weather-card .wdetail span{display:flex;align-items:center;gap:3px}
+.weather-rating{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:600;margin-top:6px}
+.weather-rating.good{background:rgba(90,138,90,.3);color:var(--birch)}
+.weather-rating.ok{background:rgba(212,163,115,.3);color:var(--amber)}
+.weather-rating.bad{background:rgba(231,111,111,.3);color:var(--danger)}
+.weather-loading{text-align:center;padding:20px;color:var(--muted);font-size:.85rem}
+.weather-error{text-align:center;padding:20px;color:var(--danger);font-size:.85rem}
+.weather-note{font-size:.7rem;color:var(--muted);margin-top:8px;text-align:center;opacity:.7}
+
 /* Login Overlay */
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;transition:opacity .4s}
 .login-overlay.hidden{opacity:0;pointer-events:none}
@@ -171,6 +190,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <li><a href="#settle">🔄 Ausgleichen</a></li>
 <li><a href="#packing">🧳 Packliste</a></li>
 <li><a href="#info">📋 Infos</a></li>
+<li><a href="#weather">🌦️ Wetter</a></li>
 <li id="loginNavItem" style="display:none"></li>
 </ul>
 </nav>
@@ -251,6 +271,16 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <h3>🎫 Angelkarte (Fiskekort)</h3>
 <p>Einfach online buchen: <a href="https://www.ifiske.se" target="_blank" style="color:var(--water)">iFiske.se</a> · ca. 45€/Person</p>
 <p style="font-size:.8rem;color:var(--muted);margin-top:4px">⚠️ Entnahmespektrum (Window Limit): Hechte & Zander 50–80 cm, max. 1–2 Fische/Tag. Große Fische zurück!</p>
+</div>
+</section>
+
+<section class="section" id="weather">
+<h2><span class="icon">🌦️</span> Wetter Åsnen</h2>
+<div class="card">
+<h3>📅 7-Tage-Vorhersage</h3>
+<div class="weather-loading" id="weatherStatus">🌤️ Lade Wetterdaten...</div>
+<div class="weather-grid" id="weatherGrid" style="display:none"></div>
+<div class="weather-note" id="weatherNote" style="display:none">🌲 Basierend auf Open-Meteo · Ideal zum Angeln bei wenig Wind & Regen</div>
 </div>
 </section>
 
@@ -650,6 +680,93 @@ DATA.packing.forEach((item, i) => {
   div.appendChild(document.createTextNode(item));
   packGrid.appendChild(div);
 });
+
+// ============================
+// WETTER — Open-Meteo API (kostenlos, kein Key)
+// ============================
+const WEATHER_LAT = 56.5662;
+const WEATHER_LON = 14.7698;
+
+const WMO_ICONS = {
+  0:'☀️',1:'🌤️',2:'⛅',3:'☁️',
+  45:'🌫️',48:'🌫️',
+  51:'🌦️',53:'🌦️',55:'🌦️',
+  61:'🌧️',63:'🌧️',65:'🌧️',
+  71:'❄️',73:'❄️',75:'❄️',
+  80:'🌦️',81:'🌧️',82:'🌧️',
+  95:'⛈️',96:'⛈️',99:'⛈️'
+};
+
+function getWMOIcon(code) { return WMO_ICONS[code] || '🌤️'; }
+
+function getFishingRating(temp, rainProb, wind, code) {
+  if (code >= 95) return {level:'bad',label:'⛈️ Sturm'};
+  if (code >= 80) return {level:'ok',label:'🌦️ Schauer'};
+  if (code >= 61) return {level:'bad',label:'🌧️ Regen'};
+  if (rainProb > 50) return {level:'bad',label:'🌧️ Nass 🎣?'};
+  if (rainProb > 20) return {level:'ok',label:'🌦️ Okay'};
+  if (wind > 12) return {level:'bad',label:'💨 Zu windig'};
+  if (wind > 8) return {level:'ok',label:'💨 Bissig windig'};
+  if (code <= 3) return {level:'good',label:'🔥 Top-Angeln!'};
+  return {level:'good',label:'🎣 Prima Bedingungen'};
+}
+
+async function loadWeather() {
+  const status = document.getElementById('weatherStatus');
+  const grid = document.getElementById('weatherGrid');
+  const note = document.getElementById('weatherNote');
+  
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,weathercode&timezone=auto`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const d = data.daily;
+    
+    const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const today = new Date();
+    
+    grid.innerHTML = d.time.map((dateStr, i) => {
+      const dt = new Date(dateStr + 'T12:00:00');
+      const dayName = dayNames[dt.getDay()];
+      const dateLabel = `${dt.getDate()}.${dt.getMonth()+1}.`;
+      const maxTemp = Math.round(d.temperature_2m_max[i]);
+      const minTemp = Math.round(d.temperature_2m_min[i]);
+      const rainProb = d.precipitation_probability_max[i] || 0;
+      const wind = Math.round(d.wind_speed_10m_max[i] * 10) / 10;
+      const code = d.weathercode[i];
+      const rating = getFishingRating(maxTemp, rainProb, wind, code);
+      const isToday = dateStr === today.toISOString().slice(0,10);
+      
+      return `<div class="weather-card${isToday?' today':''}">
+              <div class="wday">${dayName}</div>
+              <div class="wdate">${dateLabel}</div>
+              <div class="wicon">${getWMOIcon(code)}</div>
+              <div class="wtemp">${maxTemp}° <span class="low">${minTemp}°</span></div>
+              <div class="wdetail"><span>💧${rainProb}%</span><span>💨${wind}m/s</span></div>
+              <div class="weather-rating ${rating.level}">${rating.label}</div>
+            </div>`;
+    }).join('');
+    
+    status.style.display = 'none';
+    grid.style.display = 'grid';
+    note.style.display = 'block';
+    
+  } catch (e) {
+    status.innerHTML = `⚠️ Wetter konnte nicht geladen werden: ${e.message}`;
+    status.className = 'weather-error';
+  }
+}
+
+loadWeather();
+
+// Auto-refresh weather at midnight (so the 7-day window rolls over)
+setTimeout(() => {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const msTillMidnight = tomorrow - now;
+  setTimeout(() => { location.reload(); }, msTillMidnight);
+}, 100);
 </script>
 </body>
 </html>
