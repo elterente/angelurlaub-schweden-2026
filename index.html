@@ -259,6 +259,11 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .flight-radar{margin-top:12px;border-radius:8px;overflow:hidden;display:none}
 .flight-radar.show{display:block}
 .flight-radar iframe{width:100%;height:360px;border:0}
+.fr24-banner{display:none;width:100%;margin-top:10px;padding:14px 20px;background:linear-gradient(135deg,var(--water),#3a6a7a);border:1px solid var(--gold);border-radius:10px;color:#fff;font-size:.95rem;font-weight:700;text-align:center;text-decoration:none;font-family:'Inter',sans-serif;transition:.2s;align-items:center;justify-content:center;gap:10px}
+.fr24-banner.show{display:flex}
+.fr24-banner:hover{background:linear-gradient(135deg,var(--gold),#c9a040);color:#000;transform:translateY(-2px);box-shadow:0 4px 20px rgba(230,184,94,.3)}
+.fr24-banner .fr24-arrow{font-size:1.2rem;transition:.2s}
+.fr24-banner:hover .fr24-arrow{transform:translateX(4px)}
 .flight-live-data{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
 .flight-live-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center}
 .flight-live-item .live-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
@@ -361,18 +366,20 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
     <div class="flight-actions">
       <input class="flight-input" id="flightNumInput" placeholder="Flugnummer z.B. LH1234" maxlength="10" onkeydown="if(event.key==='Enter')trackFlight()">
       <button class="flight-track-btn" id="trackBtn" onclick="trackFlight()">📡 Tracken</button>
-      <a class="nm-btn" id="fr24Link" href="#" target="_blank" rel="noopener">🔗 FlightRadar24</a>
-    </div>
-  </div>
-  <div class="flight-countdown" id="flightCountdown">
-    <div class="cd-num">--</div>
-    <div class="cd-label" id="flightStatusLabel">Flug eingeben</div>
-  </div>
-</div>
-<div class="flight-live-data" id="flightLiveData" style="display:none"></div>
-<div class="flight-radar" id="flightRadar">
-  <iframe id="fr24Frame" src="" allowfullscreen loading="lazy"></iframe>
-</div>
+          </div>
+        </div>
+        <div class="flight-countdown" id="flightCountdown">
+          <div class="cd-num">--</div>
+          <div class="cd-label">Flug eingeben</div>
+        </div>
+      </div>
+      <div class="flight-live-data" id="flightLiveData" style="display:none"></div>
+      <div class="flight-radar" id="flightRadar">
+        <iframe id="fr24Frame" src="" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <a class="fr24-banner" id="fr24Banner" href="#" target="_blank" rel="noopener">
+        📡 Diesen Flug auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>
+      </a>
 </div></div></div>
 </div>
 </section>
@@ -1316,11 +1323,11 @@ async function trackFlight() {
   // 2. ALWAYS show ADS-B Exchange live radar embed (works in iframes!)
   showAdsxEmbed(52.5, 13.4, 7);
 
-  // 3. FR24 external link
-  const fr24 = document.getElementById('fr24Link');
+  // 3. FR24 banner — prominent link below the radar
+  const fr24 = document.getElementById('fr24Banner');
   fr24.href = `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}`;
-  fr24.style.opacity = '1';
-  fr24.style.pointerEvents = 'auto';
+  fr24.classList.add('show');
+  fr24.innerHTML = `📡 <strong>${flightNum}</strong> auf FlightRadar24 anzeigen — Position, Route, Höhe, Speed <span class="fr24-arrow">→</span>`;
 
   // 4. Try OpenSky telemetry as bonus
   await tryOpenSkyTelemetry(flightNum);
@@ -1379,10 +1386,11 @@ function saveFlightNum(val) {
     document.getElementById('flightRoute').textContent = `${saved.departure || '???'} ✈️ ${saved.arrival || '???'} · ${saved.airline || ''}`;
     document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Gespeichert — 📡 Tracken klicken`;
     document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${saved.number}</div><div class="cd-label">Zum Tracken</div>`;
-    const fr24 = document.getElementById('fr24Link');
+    // Show FR24 banner even without live tracking active
+    const fr24 = document.getElementById('fr24Banner');
     fr24.href = `https://www.flightradar24.com/data/flights/${saved.number.toLowerCase()}`;
-    fr24.style.opacity = '1';
-    fr24.style.pointerEvents = 'auto';
+    fr24.classList.add('show');
+    fr24.innerHTML = `📡 <strong>${saved.number}</strong> auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>`;
   }
 })();
 </script>
