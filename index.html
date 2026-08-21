@@ -210,6 +210,34 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .collapse-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
 .collapse-body.open{max-height:800px}
 .collapse-body-inner{padding:10px 0}
+
+/* Car Rental */
+.car-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px}
+.car-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;transition:.2s;text-decoration:none;display:block}
+.car-card:hover{border-color:var(--water);transform:translateY(-2px)}
+.car-card .car-icon{font-size:2rem;margin-bottom:4px}
+.car-card .car-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.car-card .car-loc{font-size:.7rem;color:var(--muted);margin-top:2px}
+
+/* Currency Converter */
+.currency-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.currency-field{flex:1;min-width:140px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.currency-field label{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.currency-field .cur-input{display:flex;align-items:center;gap:6px}
+.currency-field .cur-input span{font-size:1.1rem;font-weight:700;color:var(--gold);flex-shrink:0}
+.currency-field input{flex:1;background:transparent;border:none;color:var(--text);font-size:1.4rem;font-weight:600;font-family:'Inter',sans-serif;outline:none;width:100%}
+.currency-field input::placeholder{color:var(--muted);opacity:.4}
+.currency-swap{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--water);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.currency-swap:hover{background:var(--water);color:#fff;border-color:var(--water)}
+.currency-rate{font-size:.75rem;color:var(--muted);margin-top:10px;text-align:center}
+.currency-rate .rate-val{color:var(--gold);font-weight:600}
+.currency-rate .rate-live{color:var(--birch);font-size:.65rem}
+.currency-rate .rate-cached{color:var(--amber);font-size:.65rem}
+
+/* Quick convert buttons */
+.quick-convert{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick-convert button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
+.quick-convert button:hover{background:var(--water);color:#fff;border-color:var(--water)}
 </style>
 </head>
 <body>
@@ -245,6 +273,8 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <li><a href="#info">📋 Infos</a></li>
 <li><a href="#weather">🌦️ Wetter</a></li>
 <li><a href="#plan">📋 Plan</a></li>
+<li><a href="#car">🚗 Mietwagen</a></li>
+<li><a href="#fx">🌍 Währung</a></li>
 <li id="loginNavItem" style="display:none"></li>
 </ul>
 </nav>
@@ -348,6 +378,68 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <div class="collapse-section">
 <button class="collapse-trigger" onclick="toggleCollapse(this)">💰 Alle Kosten <span class="collapse-icon">▶</span></button>
 <div class="collapse-body"><div class="collapse-body-inner"><table class="costs" id="costTable"></table></div></div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 🚗 MIETWAGEN                                                -->
+<!-- ============================================================ -->
+<section class="section" id="car">
+<h2><span class="icon">🚗</span> Mietwagen vor Ort</h2>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🚗 Autovermietung in der Region <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card">
+<p style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Falls jemand vor Ort ein Auto braucht — hier die Stationen in Växjö, Tingsryd & Umgebung:</p>
+<div class="car-grid">
+<a href="https://www.europcar.de/stationen/schweden/vaxjo" target="_blank" rel="noopener" class="car-card">
+  <div class="car-icon">🚙</div>
+  <div class="car-name">Europcar</div>
+  <div class="car-loc">Växjö · Flughafen</div>
+</a>
+<a href="https://www.sixt.de/mietwagen/schweden/vaxjo/" target="_blank" rel="noopener" class="car-card">
+  <div class="car-icon">🚗</div>
+  <div class="car-name">Sixt</div>
+  <div class="car-loc">Växjö · Stadt</div>
+</a>
+<a href="https://www.hertz.de/p/mietwagen/schweden/vaxjo" target="_blank" rel="noopener" class="car-card">
+  <div class="car-icon">🏎️</div>
+  <div class="car-name">Hertz</div>
+  <div class="car-loc">Växjö · Zentrum</div>
+</a>
+<a href="https://www.avis.de/mietwagen/schweden/vaxjo" target="_blank" rel="noopener" class="car-card">
+  <div class="car-icon">🚐</div>
+  <div class="car-name">Avis</div>
+  <div class="car-loc">Växjö Airport</div>
+</a>
+</div>
+<p style="font-size:.75rem;color:var(--muted);margin-top:12px">📍 Växjö Småland Airport (VXO) ist ~60 km von Fålaboda entfernt. <a href="https://www.google.com/maps/dir/V%C3%A4xj%C3%B6+Sm%C3%A5land+Airport/F%C3%A5laboda+7,+362+95+Urshult/" target="_blank" style="color:var(--water)">Route in Maps →</a></p>
+</div></div></div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 🌍 WÄHRUNGSUMRECHNER                                       -->
+<!-- ============================================================ -->
+<section class="section" id="fx">
+<h2><span class="icon">🌍</span> Währungsumrechner</h2>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">💶 SEK ↔ EUR <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card">
+<div class="currency-wrap">
+  <div class="currency-field">
+    <label>💶 EUR</label>
+    <div class="cur-input"><span>€</span><input type="number" id="eurInput" placeholder="0" step="0.01" oninput="convertEur()"></div>
+    <div class="quick-convert" id="eurQuick"></div>
+  </div>
+  <button class="currency-swap" onclick="swapCurrency()" title="Tauschen">⇄</button>
+  <div class="currency-field">
+    <label>🇸🇪 SEK</label>
+    <div class="cur-input"><span>kr</span><input type="number" id="sekInput" placeholder="0" step="1" oninput="convertSek()"></div>
+    <div class="quick-convert" id="sekQuick"></div>
+  </div>
+</div>
+<div class="currency-rate" id="rateInfo">📡 Lade aktuellen Kurs...</div>
+</div></div></div>
 </div>
 </section>
 
@@ -941,6 +1033,85 @@ function copyPlan() {
 }
 
 renderPlan();
+
+// ============================
+// WÄHRUNGSUMRECHNER SEK ↔ EUR
+// ============================
+let fxRate = null; // EUR→SEK rate: 1 EUR = X SEK
+const FX_FALLBACK = 11.52; // Fallback rate (August 2026)
+
+async function loadFxRate() {
+  const info = document.getElementById('rateInfo');
+  try {
+    const cached = JSON.parse(localStorage.getItem('angel-fx-cache') || 'null');
+    if (cached && (Date.now() - cached.at < 86400000)) { // 24h cache
+      fxRate = cached.rate;
+      info.innerHTML = `<span class="rate-val">1 € = ${fxRate.toFixed(4)} kr</span> <span class="rate-cached">(gespeichert)</span>`;
+      buildQuickButtons();
+      return;
+    }
+    // Try free API
+    const res = await fetch('https://open.er-api.com/v6/latest/EUR', {signal: AbortSignal.timeout(5000)});
+    if (res.ok) {
+      const data = await res.json();
+      fxRate = data.rates.SEK;
+      localStorage.setItem('angel-fx-cache', JSON.stringify({rate: fxRate, at: Date.now()}));
+      info.innerHTML = `<span class="rate-val">1 € = ${fxRate.toFixed(4)} kr</span> <span class="rate-live">● live</span>`;
+      buildQuickButtons();
+      return;
+    }
+  } catch(e) { /* fall through to fallback */ }
+  
+  // Fallback
+  if (!fxRate) {
+    fxRate = FX_FALLBACK;
+    info.innerHTML = `<span class="rate-val">1 € = ${fxRate.toFixed(4)} kr</span> <span class="rate-cached">(ca.-Wert · offline)</span>`;
+    buildQuickButtons();
+  }
+}
+
+function buildQuickButtons() {
+  const eurQuick = document.getElementById('eurQuick');
+  const sekQuick = document.getElementById('sekQuick');
+  const eurVals = [50, 100, 200, 500, 645];
+  const sekVals = [500, 1000, 2000, 5000, 10000];
+  eurQuick.innerHTML = eurVals.map(v => `<button onclick="setEur(${v})">${v} €</button>`).join('');
+  sekQuick.innerHTML = sekVals.map(v => `<button onclick="setSek(${v})">${v} kr</button>`).join('');
+}
+
+function setEur(v) {
+  const inp = document.getElementById('eurInput');
+  inp.value = v;
+  convertEur();
+}
+function setSek(v) {
+  const inp = document.getElementById('sekInput');
+  inp.value = v;
+  convertSek();
+}
+
+function convertEur() {
+  const eur = parseFloat(document.getElementById('eurInput').value) || 0;
+  const sek = eur * fxRate;
+  document.getElementById('sekInput').value = eur > 0 ? Math.round(sek) : '';
+}
+
+function convertSek() {
+  const sek = parseFloat(document.getElementById('sekInput').value) || 0;
+  const eur = sek / fxRate;
+  document.getElementById('eurInput').value = sek > 0 ? eur.toFixed(2) : '';
+}
+
+function swapCurrency() {
+  const eurInp = document.getElementById('eurInput');
+  const sekInp = document.getElementById('sekInput');
+  const tmp = eurInp.value;
+  eurInp.value = sekInp.value;
+  sekInp.value = tmp;
+}
+
+// Load rate on page init
+loadFxRate();
 </script>
 </body>
 </html>
