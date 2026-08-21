@@ -199,6 +199,16 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .house-img{width:100%;height:240px;object-fit:cover;display:block;transition:transform .3s}
 .house-img-wrap:hover .house-img{transform:scale(1.15)}
 .house-img-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.9));padding:30px 16px 10px;font-size:.75rem;color:var(--gold);font-weight:500;letter-spacing:.5px}
+
+/* Collapsible */
+.collapse-section{margin-bottom:10px}
+.collapse-trigger{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;width:100%;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;transition:.2s;user-select:none}
+.collapse-trigger:hover{border-color:var(--water);background:rgba(74,124,140,.06)}
+.collapse-trigger .collapse-icon{font-size:.7rem;color:var(--muted);transition:transform .3s;display:inline-block}
+.collapse-trigger.open .collapse-icon{transform:rotate(90deg)}
+.collapse-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapse-body.open{max-height:800px}
+.collapse-body-inner{padding:10px 0}
 </style>
 </head>
 <body>
@@ -257,19 +267,21 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 
 <section class="section" id="team">
 <h2><span class="icon">👥</span> Team</h2>
-<div class="team-grid" id="teamGrid"></div>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">👥 Team <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="team-grid" id="teamGrid"></div></div></div>
+</div>
 </section>
 
 <section class="section" id="route">
 <h2><span class="icon">🚗</span> Reiseroute</h2>
-<div class="card">
-<h3>📅 Abfahrt: 04. September 2026</h3>
-<ul class="route-steps" id="routeSteps"></ul>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">📅 Abfahrt & Route <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><ul class="route-steps" id="routeSteps"></ul></div></div></div>
 </div>
-<div class="card">
-<h3>📍 Ziel</h3>
-<p><strong>Fålaboda 7</strong>, 362 95 Urshult, Småland, Schweden</p>
-<p style="margin-top:4px;font-size:.8rem;color:var(--muted)">Gesamtstrecke: ca. 1.150 km | Fahrtzeit: ca. 17h (inkl. Fähre)</p>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">📍 Ziel <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p><strong>Fålaboda 7</strong>, 362 95 Urshult, Småland, Schweden</p><p style="margin-top:4px;font-size:.8rem;color:var(--muted)">Gesamtstrecke: ca. 1.150 km | Fahrtzeit: ca. 17h (inkl. Fähre)</p></div></div></div>
 </div>
 </section>
 
@@ -279,145 +291,109 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <img src="falaboda-haus.jpg" alt="Fålaboda 7 am Åsnen-See" class="house-img">
 <div class="house-img-label">🏡 Fålaboda 7 — direkt am Åsnen-See</div>
 </div>
-<div class="card">
-<h3>Fålaboda 7 — See Åsnen</h3>
-<p>Vermieter: Barbara Diekamp · Fålaboda 7, 362 95 Urshult</p>
-<p style="margin-top:6px">🔗 <a href="https://www.ferienhausmiete.de/413920.htm" target="_blank" style="color:var(--water)">Ferienhausmiete.de</a></p>
-<p style="margin-top:6px;color:var(--muted);font-size:.8rem">🌲 Mitten in Småland, direkt am Åsnen-See. Motorboot inklusive.</p>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🏠 Fålaboda 7 <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p>Vermieter: Barbara Diekamp · Fålaboda 7, 362 95 Urshult</p><p style="margin-top:6px">🔗 <a href="https://www.ferienhausmiete.de/413920.htm" target="_blank" style="color:var(--water)">Ferienhausmiete.de</a></p><p style="margin-top:6px;color:var(--muted);font-size:.8rem">🌲 Mitten in Småland, direkt am Åsnen-See. Motorboot inklusive.</p></div></div></div>
 </div>
-<div class="card">
-<h3>🚤 Motorboot</h3>
-<p>Im Mietpreis enthalten (70€). Unverzichtbar zum Erreichen der besten Angelplätze — der See hat über 1.000 Inseln!</p>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🚤 Motorboot <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p>Im Mietpreis enthalten (70€). Unverzichtbar zum Erreichen der besten Angelplätze — der See hat über 1.000 Inseln!</p></div></div></div>
 </div>
-<div class="card">
-<h3>🛶 Kanu</h3>
-<p style="color:var(--gold);font-weight:600">Wird uns zusätzlich zur Verfügung gestellt! 🔥</p>
-<p style="margin-top:6px">Damit können wir uns aufteilen — Motorboot erkundet die offenen Buchten, das Kanu schleicht leise in Schilfkanten und Flachwasserzonen. So erreichen wir <strong>doppelt so viele Spots</strong>! 🎯</p>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🛶 Kanu <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p style="color:var(--gold);font-weight:600">Wird uns zusätzlich zur Verfügung gestellt! 🔥</p><p style="margin-top:6px">Damit können wir uns aufteilen — Motorboot erkundet die offenen Buchten, das Kanu schleicht leise in Schilfkanten und Flachwasserzonen. So erreichen wir <strong>doppelt so viele Spots</strong>! 🎯</p></div></div></div>
 </div>
 </section>
 
 <section class="section" id="fishing">
 <h2><span class="icon">🎣</span> Angeln am Åsnen</h2>
-<div class="card">
-<p>Der Åsnen-See (ca. 150 km²) ist ein Paradies für Raubfischangler. Mit über 1.000 Inseln, verwinkelten Buchten und einer Durchschnittstiefe von nur 3,1 m ist er ideal für Hecht, Zander und Barsch.</p>
+
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">ℹ️ Über den Åsnen-See <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p>Der Åsnen-See (ca. 150 km²) ist ein Paradies für Raubfischangler. Mit über 1.000 Inseln, verwinkelten Buchten und einer Durchschnittstiefe von nur 3,1 m ist er ideal für Hecht, Zander und Barsch.</p></div></div></div>
 </div>
-<div class="fish-grid" id="fishGrid"></div>
-<div class="card" style="margin-top:14px">
-<h3>🎯 Methoden</h3>
-<ul>
-<li><strong>Spinnfischen & Jerken</strong> — Perfekt in Flachwasserzonen, Krautfeldern und Schilfkanten</li>
-<li><strong>Schleppangeln (Trolling)</strong> — Ideal für Freiwasserflächen und tiefere Rinnen</li>
-<li><strong>Vertikalangeln & Drop-Shot</strong> — Erfolgreich auf Zander und große Barsche</li>
-</ul>
+
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🐟 Fischarten — sofort öffnen <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="fish-grid" id="fishGrid"></div></div></div>
 </div>
-<div class="card">
-<h3>🎫 Angelkarte (Fiskekort)</h3>
-<p>Einfach online buchen: <a href="https://www.ifiske.se" target="_blank" style="color:var(--water)">iFiske.se</a> · ca. 45€/Person</p>
-<p style="font-size:.8rem;color:var(--muted);margin-top:4px">⚠️ Entnahmespektrum (Window Limit): Hechte & Zander 50–80 cm, max. 1–2 Fische/Tag. Große Fische zurück!</p>
+
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🎯 Angelmethoden <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><ul><li><strong>Spinnfischen & Jerken</strong> — Perfekt in Flachwasserzonen, Krautfeldern und Schilfkanten</li><li><strong>Schleppangeln (Trolling)</strong> — Ideal für Freiwasserflächen und tiefere Rinnen</li><li><strong>Vertikalangeln & Drop-Shot</strong> — Erfolgreich auf Zander und große Barsche</li></ul></div></div></div>
+</div>
+
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🎫 Angelkarte (Fiskekort) <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p>Einfach online buchen: <a href="https://www.ifiske.se" target="_blank" style="color:var(--water)">iFiske.se</a> · ca. 45€/Person</p><p style="font-size:.8rem;color:var(--muted);margin-top:4px">⚠️ Entnahmespektrum (Window Limit): Hechte & Zander 50–80 cm, max. 1–2 Fische/Tag. Große Fische zurück!</p></div></div></div>
 </div>
 </section>
 
 <section class="section" id="weather">
 <h2><span class="icon">🌦️</span> Wetter Åsnen</h2>
-<div class="card">
-<h3>📅 7-Tage-Vorhersage</h3>
-<div class="weather-loading" id="weatherStatus">🌤️ Lade Wetterdaten...</div>
-<div class="weather-grid" id="weatherGrid" style="display:none"></div>
-<div class="weather-note" id="weatherNote" style="display:none">🌲 Basierend auf Open-Meteo · Ideal zum Angeln bei wenig Wind & Regen</div>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">📅 7-Tage-Vorhersage <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="weather-loading" id="weatherStatus">🌤️ Lade Wetterdaten...</div><div class="weather-grid" id="weatherGrid" style="display:none"></div><div class="weather-note" id="weatherNote" style="display:none">🌲 Basierend auf Open-Meteo · Ideal zum Angeln bei wenig Wind & Regen</div></div></div>
 </div>
 </section>
 
 <section class="section" id="plan">
 <h2><span class="icon">📋</span> Tagesplan</h2>
-<div class="card">
-<h3>🗓️ Unser Plan Tag für Tag</h3>
-<div class="plan-grid" id="planGrid"></div>
-<div class="plan-copy-wrap">
-<button class="plan-copy-btn" onclick="copyPlan()">💬 Plan als Text kopieren</button>
-<div class="plan-copy-msg" id="planCopyMsg">✅ In Zwischenablage kopiert!</div>
-</div>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🗓️ Unser Plan Tag für Tag <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="plan-grid" id="planGrid"></div><div class="plan-copy-wrap"><button class="plan-copy-btn" onclick="copyPlan()">💬 Plan als Text kopieren</button><div class="plan-copy-msg" id="planCopyMsg">✅ In Zwischenablage kopiert!</div></div></div></div>
 </div>
 </section>
 
 <section class="section" id="costs">
 <h2><span class="icon">💰</span> Kosten</h2>
-<div class="card">
-<table class="costs" id="costTable"></table>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">💰 Alle Kosten <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><table class="costs" id="costTable"></table></div></div>
 </div>
 </section>
 
 <section class="section" id="settle">
 <h2><span class="icon">🔄</span> Ausgleichen</h2>
-<div class="card">
-<p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">Wer hat was bezahlt? Tragt ein, dann rechnet's aus.</p>
-<div class="settle-grid" id="settleGrid"></div>
-<div class="settle-summary" id="settleSummary">
-<h3>📊 Übersicht</h3>
-<div id="settleStats"></div>
-<div class="settle-transfers" id="settleTransfers"></div>
-</div>
-<button class="settle-reset" onclick="resetSettle()">↻ Zurücksetzen</button>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🔄 Wer hat was bezahlt? <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">Wer hat was bezahlt? Tragt ein, dann rechnet's aus.</p><div class="settle-grid" id="settleGrid"></div><div class="settle-summary" id="settleSummary"><h3>📊 Übersicht</h3><div id="settleStats"></div><div class="settle-transfers" id="settleTransfers"></div></div><button class="settle-reset" onclick="resetSettle()">↻ Zurücksetzen</button></div></div>
 </div>
 </section>
 
 <section class="section" id="packing">
 <h2><span class="icon">🧳</span> Packliste</h2>
-<div class="pack-grid" id="packGrid"></div>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🧳 Packliste <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="pack-grid" id="packGrid"></div></div></div>
+</div>
 </section>
 
 <section class="section" id="info">
 <h2><span class="icon">📋</span> Wichtige Infos</h2>
-<div class="important-box">
-<h3>⚠️ Unbedingt beachten</h3>
-<ul>
-<li>🪪 <strong>Personalausweis / Reisepass</strong> — gültig! Es gibt Grenzkontrollen!</li>
-<li>🎣 Angelschein für Schweden (45€, online über iFiske.se)</li>
-<li>🏦 Kaution für das Haus: 150€</li>
-<li>🧹 Reinigungspauschale: 90€</li>
-<li>📦 Dachbox: 130€ (Abholung 03.09. 8 Uhr)</li>
-</ul>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">⚠️ Unbedingt beachten <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><ul><li>🪪 <strong>Personalausweis / Reisepass</strong> — gültig! Es gibt Grenzkontrollen!</li><li>🎣 Angelschein für Schweden (45€, online über iFiske.se)</li><li>🏦 Kaution für das Haus: 150€</li><li>🧹 Reinigungspauschale: 90€</li><li>📦 Dachbox: 130€ (Abholung 03.09. 8 Uhr)</li></ul></div></div></div>
 </div>
-<div class="rules-box">
-<h3>🚗 Autofahr-Regeln</h3>
-<ul>
-<li>❌ Rauchen, Kiffen, Spritzen, Lines ziehen</li>
-<li>❌ Übermäßig saufen, Huren bestellen</li>
-<li>❌ Dummes Zeug labbern, no politics, no religion</li>
-<li>✅ Wir haben uns alle lieb! ❤️</li>
-</ul>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🚗 Autofahr-Regeln <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><ul><li>❌ Rauchen, Kiffen, Spritzen, Lines ziehen</li><li>❌ Übermäßig saufen, Huren bestellen</li><li>❌ Dummes Zeug labbern, no politics, no religion</li><li>✅ Wir haben uns alle lieb! ❤️</li></ul></div></div></div>
 </div>
-<div class="card">
-<h3>🛒 Einkaufen</h3>
-<p><strong>Tempo Urshult</strong> — Södra Vägen 21A, 9 km entfernt (Lebensmittel)</p>
-<p style="margin-top:4px"><strong>In Tingsryd</strong> — größere Auswahl, inkl. Systembolaget! 🍷</p>
-<div style="border-radius:6px;overflow:hidden;margin-top:8px">
-<iframe src="https://www.google.com/maps?q=Tingsryd+Urshult+Schweden+Einkaufen&output=embed" width="100%" height="200" style="border:0;border-radius:6px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-<a href="https://www.google.com/maps/search/ICA+Supermarket+Tingsryd/" target="_blank" rel="noopener" class="nm-btn">🛒 ICA Tingsryd</a>
-<a href="https://www.google.com/maps/search/Systembolaget+Tingsryd/" target="_blank" rel="noopener" class="nm-btn">🍷 Systembolaget</a>
-<a href="https://www.google.com/maps/search/Restaurants+near+F%C3%A5laboda+7+Urshult/" target="_blank" rel="noopener" class="nm-btn">🍽️ Restaurants</a>
-<a href="https://www.google.com/maps/search/Tempo+Urshult/" target="_blank" rel="noopener" class="nm-btn">🏪 Tempo Urshult</a>
-<a href="https://www.google.com/maps/search/Apotek+near+Urshult+Schweden/" target="_blank" rel="noopener" class="nm-btn">💊 Apotek</a>
-</div>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🛒 Einkaufen <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p><strong>Tempo Urshult</strong> — Södra Vägen 21A, 9 km entfernt (Lebensmittel)</p><p style="margin-top:4px"><strong>In Tingsryd</strong> — größere Auswahl, inkl. Systembolaget! 🍷</p><div style="border-radius:6px;overflow:hidden;margin-top:8px"><iframe src="https://www.google.com/maps?q=Tingsryd+Urshult+Schweden+Einkaufen&output=embed" width="100%" height="200" style="border:0;border-radius:6px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"><a href="https://www.google.com/maps/search/ICA+Supermarket+Tingsryd/" target="_blank" rel="noopener" class="nm-btn">🛒 ICA Tingsryd</a><a href="https://www.google.com/maps/search/Systembolaget+Tingsryd/" target="_blank" rel="noopener" class="nm-btn">🍷 Systembolaget</a><a href="https://www.google.com/maps/search/Restaurants+near+F%C3%A5laboda+7+Urshult/" target="_blank" rel="noopener" class="nm-btn">🍽️ Restaurants</a><a href="https://www.google.com/maps/search/Tempo+Urshult/" target="_blank" rel="noopener" class="nm-btn">🏪 Tempo Urshult</a><a href="https://www.google.com/maps/search/Apotek+near+Urshult+Schweden/" target="_blank" rel="noopener" class="nm-btn">💊 Apotek</a></div></div></div></div>
 </div>
 </section>
 
 <section class="section" id="map">
 <h2><span class="icon">🗺️</span> Karte & Route</h2>
-<div class="card">
-<h3>📍 Fålaboda 7 — See Åsnen</h3>
-<div style="border-radius:8px;overflow:hidden;margin-top:8px">
-<iframe src="https://www.google.com/maps?q=56.56618756941794,14.769841801134605&output=embed" width="100%" height="350" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">📍 Fålaboda 7 — See Åsnen <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div style="border-radius:8px;overflow:hidden;margin-top:8px"><iframe src="https://www.google.com/maps?q=56.56618756941794,14.769841801134605&output=embed" width="100%" height="350" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div><div style="margin-top:10px;text-align:center"><a href="https://www.google.com/maps/dir/Frankfurt+am+Main/M%C3%BCnster/Hamburg+Airport/Puttgarden+F%C3%A4hre/56.56618756941794,14.769841801134605/" target="_blank" class="cta" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">🗺️ Route in Google Maps öffnen</a></div></div></div>
 </div>
-<div style="margin-top:10px;text-align:center">
-<a href="https://www.google.com/maps/dir/Frankfurt+am+Main/M%C3%BCnster/Hamburg+Airport/Puttgarden+F%C3%A4hre/56.56618756941794,14.769841801134605/" target="_blank" class="cta" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">🗺️ Route in Google Maps öffnen</a>
-</div>
-</div>
-<div class="card">
-<h3>🚗 Reisestationen</h3>
-<div id="routeMapList" style="display:flex;flex-direction:column;gap:0;padding:8px 0"></div>
-<p style="font-size:.75rem;color:var(--muted);margin-top:6px">⚠️ Pinkelpausen wurden nicht berechnet!</p>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">🚗 Reisestationen <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div id="routeMapList" style="display:flex;flex-direction:column;gap:0;padding:8px 0"></div><p style="font-size:.75rem;color:var(--muted);margin-top:6px">⚠️ Pinkelpausen wurden nicht berechnet!</p></div></div>
 </div>
 </section>
 
@@ -429,6 +405,20 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 // ============================================================
 // TADZIO: ÄNDERE HIER DIE DATEN — KEIN HTML NÖTIG
 // ============================================================
+
+// Collapsible toggle — smooth open/close
+function toggleCollapse(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  if (isOpen) {
+    body.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
 const DATA = {
   title: 'Åsnen 2026',
   subtitle: 'Schweden Angelurlaub',
