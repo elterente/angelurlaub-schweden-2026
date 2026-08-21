@@ -135,13 +135,13 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .weather-note{font-size:.7rem;color:var(--muted);margin-top:8px;text-align:center;opacity:.7}
 
 /* Daily Plan */
-.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
-.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:.2s}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px;align-items:stretch}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
 .plan-card:hover{border-color:var(--water)}
 .plan-card .plan-head{background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .plan-card .plan-head .plan-day{font-size:.8rem;font-weight:600;color:var(--water)}
 .plan-card .plan-head .plan-date{font-size:.7rem;color:var(--muted)}
-.plan-card .plan-body{padding:12px 14px}
+.plan-card .plan-body{padding:12px 14px;display:flex;flex-direction:column;flex:1;min-height:0}
 .plan-card .plan-body .plan-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:6px}
 .plan-card .plan-body .plan-focus{font-size:.75rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .plan-card .plan-body .plan-boat{font-size:.75rem;margin-bottom:3px;display:flex;align-items:center;gap:4px}
@@ -149,7 +149,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .plan-card .plan-body .plan-boat .val{color:var(--text);font-weight:500}
 .plan-card .plan-body .plan-meal{font-size:.75rem;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:4px}
 .plan-card .plan-body .plan-rating{display:inline-block;padding:1px 7px;border-radius:3px;font-size:.65rem;font-weight:600;margin-bottom:6px}
-.plan-card .plan-body .plan-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:.75rem;font-family:'Inter',sans-serif;resize:vertical;min-height:48px;box-sizing:border-box;outline:none;transition:.2s}
+.plan-card .plan-body .plan-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:.75rem;font-family:'Inter',sans-serif;resize:vertical;min-height:48px;box-sizing:border-box;outline:none;transition:.2s;margin-top:auto}
 .plan-card .plan-body .plan-note:focus{border-color:var(--water);background:rgba(74,124,140,.08)}
 .plan-card .plan-body .plan-note::placeholder{color:var(--muted);opacity:.5}
 
@@ -524,7 +524,7 @@ const DATA = {
       focus: 'Schilfkanten & Krautfelder mit dem Kanu',
       boats: { motorboot: 'Tadzio + elterente', kanu: 'Hubcio + Benzo' }, meal: 'Steak vom Grill 🥩' },
     { day: 5, date: '08.09.', title: 'Inselfischen 🏝️',
-      focus: 'Picknick auf einer der 1.000 Inseln',
+      focus: 'Picknick auf einer der 1.000 Inseln erleben',
       boats: { motorboot: 'Alle', kanu: '—' }, meal: 'Picknick 🧺' },
     { day: 6, date: '09.09.', title: 'Findet Nemo 🐟',
       focus: 'Barsch-Session an Felsen & Steilküsten',
