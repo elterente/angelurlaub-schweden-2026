@@ -134,6 +134,35 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .weather-error{text-align:center;padding:20px;color:var(--danger);font-size:.85rem}
 .weather-note{font-size:.7rem;color:var(--muted);margin-top:8px;text-align:center;opacity:.7}
 
+/* Daily Plan */
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:.2s}
+.plan-card:hover{border-color:var(--water)}
+.plan-card .plan-head{background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.plan-card .plan-head .plan-day{font-size:.8rem;font-weight:600;color:var(--water)}
+.plan-card .plan-head .plan-date{font-size:.7rem;color:var(--muted)}
+.plan-card .plan-body{padding:12px 14px}
+.plan-card .plan-body .plan-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.plan-card .plan-body .plan-focus{font-size:.75rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.plan-card .plan-body .plan-boat{font-size:.75rem;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.plan-card .plan-body .plan-boat .label{color:var(--muted)}
+.plan-card .plan-body .plan-boat .val{color:var(--text);font-weight:500}
+.plan-card .plan-body .plan-meal{font-size:.75rem;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.plan-card .plan-body .plan-rating{display:inline-block;padding:1px 7px;border-radius:3px;font-size:.65rem;font-weight:600;margin-bottom:6px}
+.plan-card .plan-body .plan-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:.75rem;font-family:'Inter',sans-serif;resize:vertical;min-height:48px;box-sizing:border-box;outline:none;transition:.2s}
+.plan-card .plan-body .plan-note:focus{border-color:var(--water);background:rgba(74,124,140,.08)}
+.plan-card .plan-body .plan-note::placeholder{color:var(--muted);opacity:.5}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--water)}
+.plan-copy-wrap{text-align:right;margin-top:10px}
+.plan-copy-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.plan-copy-btn:hover{background:var(--water);color:#fff;border-color:var(--water);transform:translateY(-1px)}
+.plan-copy-msg{font-size:.7rem;color:var(--birch);margin-top:4px;text-align:right;display:none}
+
 /* Login Overlay */
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;transition:opacity .4s}
 .login-overlay.hidden{opacity:0;pointer-events:none}
@@ -191,6 +220,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <li><a href="#packing">🧳 Packliste</a></li>
 <li><a href="#info">📋 Infos</a></li>
 <li><a href="#weather">🌦️ Wetter</a></li>
+<li><a href="#plan">📋 Plan</a></li>
 <li id="loginNavItem" style="display:none"></li>
 </ul>
 </nav>
@@ -281,6 +311,18 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <div class="weather-loading" id="weatherStatus">🌤️ Lade Wetterdaten...</div>
 <div class="weather-grid" id="weatherGrid" style="display:none"></div>
 <div class="weather-note" id="weatherNote" style="display:none">🌲 Basierend auf Open-Meteo · Ideal zum Angeln bei wenig Wind & Regen</div>
+</div>
+</section>
+
+<section class="section" id="plan">
+<h2><span class="icon">📋</span> Tagesplan</h2>
+<div class="card">
+<h3>🗓️ Unser Plan Tag für Tag</h3>
+<div class="plan-grid" id="planGrid"></div>
+<div class="plan-copy-wrap">
+<button class="plan-copy-btn" onclick="copyPlan()">💬 Plan als Text kopieren</button>
+<div class="plan-copy-msg" id="planCopyMsg">✅ In Zwischenablage kopiert!</div>
+</div>
 </div>
 </section>
 
@@ -460,6 +502,33 @@ const DATA = {
     '📱 Handy-Ladegerät, Powerbank',
     '🧢 Regenjacke, Sonnencreme, Mückenschutz',
     '📷 Kamera / GoPro',
+  ],
+
+  dailyPlan: [
+    { day: 1, date: '04.09.', title: 'Anreise & Ankunft 🚗',
+      focus: 'Haus beziehen, erste Erkundung, Abendessen',
+      boats: { motorboot: '—', kanu: '—' }, meal: 'Grillen 🥩' },
+    { day: 2, date: '05.09.', title: 'Erster Angel-Tag 🎣',
+      focus: 'Nördliche Buchten (Hecht), Basis einrichten',
+      boats: { motorboot: 'Tadzio + elterente', kanu: 'Hubcio + Benzo' }, meal: 'Frischer Fisch 🐟' },
+    { day: 3, date: '06.09.', title: 'Trolling auf Zander 🎣',
+      focus: 'Tiefere Rinnen im Hauptsee, Schleppangeln',
+      boats: { motorboot: 'Alle zusammen', kanu: '—' }, meal: 'Pasta 🍝' },
+    { day: 4, date: '07.09.', title: 'Kanu-Expedition 🛶',
+      focus: 'Schilfkanten & Krautfelder mit dem Kanu',
+      boats: { motorboot: 'Tadzio + elterente', kanu: 'Hubcio + Benzo' }, meal: 'Steak vom Grill 🥩' },
+    { day: 5, date: '08.09.', title: 'Inselfischen 🏝️',
+      focus: 'Picknick auf einer der 1.000 Inseln',
+      boats: { motorboot: 'Alle', kanu: '—' }, meal: 'Picknick 🧺' },
+    { day: 6, date: '09.09.', title: 'Findet Nemo 🐟',
+      focus: 'Barsch-Session an Felsen & Steilküsten',
+      boats: { motorboot: 'Hubcio + Benzo', kanu: 'Tadzio + elterente' }, meal: 'Fischsuppe 🥣' },
+    { day: 7, date: '10.09.', title: 'Finale Runde 🔥',
+      focus: 'Letzter großer Angeltag, Trophäen-Jagd',
+      boats: { motorboot: 'Alle', kanu: '—' }, meal: 'Feuertopf 🔥' },
+    { day: 8, date: '11.09.', title: 'Abschluss & Packen 📦',
+      focus: 'Haus aufräumen, Ausrüstung trocknen',
+      boats: { motorboot: '—', kanu: '—' }, meal: 'Resteverwertung ♻️' },
   ],
 };
 
@@ -767,6 +836,91 @@ setTimeout(() => {
   const msTillMidnight = tomorrow - now;
   setTimeout(() => { location.reload(); }, msTillMidnight);
 }, 100);
+
+// ============================
+// TAGESPLAN — render + notes + copy
+// ============================
+function renderPlan() {
+  const grid = document.getElementById('planGrid');
+  const savedNotes = JSON.parse(localStorage.getItem('angel-plan-notes') || '{}');
+  const today = new Date().toISOString().slice(0,10);
+  const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  
+  grid.innerHTML = DATA.dailyPlan.map(p => {
+    const dt = new Date(p.date.replace('.','/') + '/2026');
+    const dayName = dayNames[dt.getDay()];
+    const todayStr = today.slice(8,10) + '.' + today.slice(5,7) + '.';
+    const isToday = p.date === todayStr;
+    const noteKey = 'day' + p.day;
+    const note = savedNotes[noteKey] || '';
+    
+    // Simple weather guess based on date (early Sep = good fishing in Sweden)
+    const dayOfMonth = parseInt(p.date.split('.')[0]);
+    let rating = { level: 'good', label: '🎣 Prima' };
+    if (dayOfMonth >= 10) { rating = { level: 'ok', label: '🌦️ Solide' }; }
+    
+    return `<div class="plan-card${isToday?' today':''}" style="${isToday?'border-color:var(--gold);box-shadow:0 0 8px rgba(230,184,94,.15)':''}">
+      <div class="plan-head">
+        <div class="plan-day">${isToday?'🔴 HEUTE — ':''}Tag ${p.day}</div>
+        <div class="plan-date">${dayName} ${p.date}</div>
+      </div>
+      <div class="plan-body">
+        <div class="plan-title">${p.title}</div>
+        <div class="plan-focus">🎯 ${p.focus}</div>
+        <div class="plan-boat"><span class="label">🚤</span><span class="val">${p.boats.motorboot}</span></div>
+        <div class="plan-boat"><span class="label">🛶</span><span class="val">${p.boats.kanu}</span></div>
+        <div class="plan-meal">🍽️ ${p.meal}</div>
+        <textarea class="plan-note" placeholder="Deine Notiz für diesen Tag..." data-key="${noteKey}" oninput="savePlanNote(this)">${note}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function savePlanNote(el) {
+  const notes = JSON.parse(localStorage.getItem('angel-plan-notes') || '{}');
+  notes[el.dataset.key] = el.value;
+  localStorage.setItem('angel-plan-notes', JSON.stringify(notes));
+}
+
+function copyPlan() {
+  const savedNotes = JSON.parse(localStorage.getItem('angel-plan-notes') || '{}');
+  let text = '📋 *ÅSNEN 2026 — TAGESPLAN*\n' + '='.repeat(30) + '\n\n';
+  
+  DATA.dailyPlan.forEach(p => {
+    const noteKey = 'day' + p.day;
+    const note = savedNotes[noteKey] || '';
+    text += `📅 TAG ${p.day} — ${p.date} | ${p.title}\n`;
+    text += `🎯 ${p.focus}\n`;
+    text += `🚤 Boot: ${p.boats.motorboot}\n`;
+    text += `🛶 Kanu: ${p.boats.kanu}\n`;
+    text += `🍽️ Essen: ${p.meal}\n`;
+    if (note) text += `📝 Notiz: ${note}\n`;
+    text += '—'.repeat(20) + '\n';
+  });
+  
+  text += '\n🔗 https://elterente.github.io/angelurlaub-schweden-2026\n';
+  text += '🌲 Småland · Åsnen · 04.–12.09.2026';
+  
+  navigator.clipboard.writeText(text).then(() => {
+    const msg = document.getElementById('planCopyMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const msg = document.getElementById('planCopyMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  });
+}
+
+renderPlan();
 </script>
 </body>
 </html>
