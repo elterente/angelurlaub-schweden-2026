@@ -31,8 +31,8 @@ nav ul{display:flex;gap:0;list-style:none;max-width:1000px;margin:0 auto;overflo
 nav ul li a{display:block;padding:6px 14px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:500;white-space:nowrap;transition:.2s;border-radius:6px}
 nav ul li a:hover{color:var(--gold);background:var(--surface)}
 
-.section{padding:50px 20px;max-width:900px;margin:0 auto}
-.section h2{font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:24px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.section{padding:30px 20px;max-width:900px;margin:0 auto}
+.section h2{font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:16px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .section h2 .icon{font-size:1.4rem}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
 .card h3{color:var(--water);font-size:1rem;font-weight:600;margin-bottom:8px}
@@ -189,7 +189,8 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .login-btn{background:var(--birch);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;transition:.2s}
 .login-btn:hover{background:var(--water);transform:translateY(-2px)}
 .login-error{color:var(--danger);font-size:.75rem;margin-top:8px;display:none}
-.login-greeting{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.8rem;color:var(--muted);white-space:nowrap}
+.login-greeting{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.7rem;color:var(--muted);white-space:nowrap;position:fixed;top:10px;right:20px;z-index:100;opacity:.85;transition:opacity .2s}
+.login-greeting:hover{opacity:1}
 .login-greeting span{color:var(--gold);font-weight:600}
 .logout-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:.7rem;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
 .logout-btn:hover{color:var(--danger);border-color:var(--danger)}
@@ -201,8 +202,8 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .house-img-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.9));padding:30px 16px 10px;font-size:.75rem;color:var(--gold);font-weight:500;letter-spacing:.5px}
 
 /* Collapsible */
-.collapse-section{margin-bottom:10px}
-.collapse-trigger{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;width:100%;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;transition:.2s;user-select:none}
+.collapse-section{margin-bottom:6px}
+.collapse-trigger{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;width:100%;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;transition:.2s;user-select:none}
 .collapse-trigger:hover{border-color:var(--water);background:rgba(74,124,140,.06)}
 .collapse-trigger .collapse-icon{font-size:.7rem;color:var(--muted);transition:transform .3s;display:inline-block}
 .collapse-trigger.open .collapse-icon{transform:rotate(90deg)}
@@ -267,10 +268,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 
 <section class="section" id="team">
 <h2><span class="icon">👥</span> Team</h2>
-<div class="collapse-section">
-<button class="collapse-trigger" onclick="toggleCollapse(this)">👥 Team <span class="collapse-icon">▶</span></button>
-<div class="collapse-body"><div class="collapse-body-inner"><div class="team-grid" id="teamGrid"></div></div></div>
-</div>
+<div class="team-grid" id="teamGrid"></div>
 </section>
 
 <section class="section" id="route">
