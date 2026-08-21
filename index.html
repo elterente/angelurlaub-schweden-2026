@@ -425,7 +425,10 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
     <div class="flight-dash-metric"><div class="met-val" id="metHeading">—</div><div class="met-lbl">Kurs</div></div>
   </div>
 
-  <div class="flight-dash-map"><iframe id="dashMapFrame" src="" allowfullscreen loading="lazy"></iframe></div>
+  <div class="flight-dash-map" id="dashMapContainer">
+    <canvas id="dashMiniRadar" width="800" height="320" style="width:100%;height:auto;background:var(--bg);border-radius:8px"></canvas>
+    <div id="dashRadarLabels" style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);padding:4px 8px"></div>
+  </div>
 
   <a class="fr24-banner show" id="fr24Banner" href="#" target="_blank" rel="noopener">
     📡 Diesen Flug auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>
@@ -1292,6 +1295,70 @@ function headingToCardinal(deg){
   return d[Math.round(deg/22.5)%16];
 }
 
+// ============ MINI-RADAR (Canvas) ============
+
+function drawMiniRadar(fd, os, pct){
+  const c=document.getElementById('dashMiniRadar');
+  const w=c.width, h=c.height, ctx=c.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+
+  const pad=40; // padding
+  const depX=pad, depY=h/2;
+  const arrX=w-pad, arrY=h/2;
+  const progX=depX+(arrX-depX)*(pct/100);
+
+  // Background grid
+  ctx.strokeStyle='rgba(29,53,87,.3)'; ctx.lineWidth=.5;
+  for(let i=0;i<=4;i++){const x=depX+(arrX-depX)*(i/4);ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,h-pad);ctx.stroke();}
+  for(let i=0;i<=3;i++){const y=pad+(h-2*pad)*(i/3);ctx.beginPath();ctx.moveTo(depX,y);ctx.lineTo(arrX,y);ctx.stroke();}
+
+  // Horizon curve (great circle effect)
+  ctx.strokeStyle='rgba(74,124,140,.25)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+  ctx.beginPath(); ctx.moveTo(depX,depY);
+  const cx=(depX+arrX)/2, cy=depY-(arrX-depX)*.08;
+  ctx.quadraticCurveTo(cx,cy,arrX,arrY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Progress path (solid)
+  ctx.strokeStyle='rgba(230,184,94,.5)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(depX,depY);
+  const t=pct/100, midX=depX+(arrX-depX)*t;
+  const midY=depY-(arrX-depX)*.08*4*t*(1-t);
+  ctx.quadraticCurveTo((depX+midX)/2,depY-(midX-depX)*.08*t,midX,midY);
+  ctx.stroke();
+
+  // Departure airport (blue dot)
+  ctx.fillStyle='#4a7c8c'; ctx.beginPath(); ctx.arc(depX,depY,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 8px Inter,sans-serif'; ctx.textAlign='center';
+  ctx.fillText(fd.departure||'DEP',depX,depY+20);
+
+  // Arrival airport (green dot)
+  ctx.fillStyle='#5a8a5a'; ctx.beginPath(); ctx.arc(arrX,arrY,8,0,Math.PI*2); ctx.fill();
+  ctx.fillText(fd.arrival||'ARR',arrX,arrY+20);
+
+  // Current position (gold pulsing)
+  ctx.save();
+  ctx.fillStyle='rgba(230,184,94,.25)'; ctx.beginPath(); ctx.arc(progX,midY,16,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(230,184,94,.15)'; ctx.beginPath(); ctx.arc(progX,midY,24,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e6b85e'; ctx.beginPath(); ctx.arc(progX,midY,6,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6b85e'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(progX,midY,10,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+
+  // Label
+  const altLabel=os&&os.alt?os.alt+'m':'~'+(pct>0?'Reiseflughöhe':'');
+  const spdLabel=os&&os.spd?os.spd+' km/h':'';
+  ctx.fillStyle='#fff'; ctx.font='bold 9px Inter,sans-serif';
+  ctx.fillText('✈ '+fd.number,progX,midY-20);
+  if(altLabel)ctx.fillText(altLabel,progX,midY-8);
+  ctx.fillStyle='var(--muted)'; ctx.font='7px Inter,sans-serif';
+  if(spdLabel)ctx.fillText(spdLabel,progX,midY+16);
+
+  // Distance label
+  document.getElementById('dashRadarLabels').innerHTML=
+    '<span>🛫 '+fd.departure+'</span><span style="color:var(--gold);font-weight:600">'+(pct>0?Math.round(pct)+'%':'')+'</span><span>🛬 '+fd.arrival+'</span>';
+}
+
 // ============ DASHBOARD UPDATE ============
 
 function updateDashboard(fd,os){
@@ -1341,11 +1408,10 @@ function updateDashboard(fd,os){
 
   document.getElementById('metHeading').textContent=os&&os.hdg?os.hdg+'° '+headingToCardinal(os.hdg):'—';
 
-  const mlat=os&&os.lat?os.lat:((fd.depLat||48)+(fd.arrLat||53))/2;
-  const mlon=os&&os.lon?os.lon:((fd.depLon||11)+(fd.arrLon||10))/2;
-  document.getElementById('dashMapFrame').src='https://globe.adsbexchange.com/?lat='+mlat.toFixed(2)+'&lon='+mlon.toFixed(2)+'&zoom='+(os&&os.lat?7:6);
+  // Mini-Radar zeichnen (nur dieser eine Flug!)
+    drawMiniRadar(fd, os, pct);
 
-  const fr24=document.getElementById('fr24Banner');
+    const fr24=document.getElementById('fr24Banner');
   if(fd.number){
     fr24.href='https://www.flightradar24.com/data/flights/'+fd.number.toLowerCase();
     fr24.classList.add('show');
