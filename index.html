@@ -1217,37 +1217,52 @@ function buildCallsigns(flightNum) {
 }
 
 async function queryOpenSky(callsigns) {
-  // OpenSky free API — try each callsign variant
-  for (const cs of callsigns) {
-    try {
-      const url = `https://opensky-network.org/api/states/all?time=0&icao24=&callsign=${cs}`;
-      const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (data.states && data.states.length > 0) {
-        const s = data.states[0];
+  // OpenSky free API ignores callsign filter — returns ALL flights.
+  // We fetch once and filter client-side by matching callsign (trimmed).
+  try {
+    const url = 'https://opensky-network.org/api/states/all?time=0';
+    const res = await fetch(url, {signal: AbortSignal.timeout(15000)});
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.states || data.states.length === 0) return null;
+
+    // Normalize target callsigns for matching (trim + uppercase)
+    const targets = new Set(callsigns.map(c => c.trim().toUpperCase()));
+
+    // Find the first state whose callsign matches any target
+    for (const s of data.states) {
+      const cs = (s[1] || '').trim().toUpperCase();
+      // Match: exact callsign OR callsign starts with target (e.g. "LOT380" matches "LOT380 ")
+      const matched = [...targets].some(t => cs === t || cs.startsWith(t));
+      if (matched) {
         return {
-          callsign: (s[1] || cs).trim(),
+          callsign: (s[1] || '').trim(),
           icao24: s[0],
           country: s[2],
           lon: s[5], lat: s[6],
           baroAlt: s[7] != null ? Math.round(s[7]) : null,
-          velocity: s[9] != null ? Math.round(s[9] * 3.6) : null, // m/s → km/h
+          velocity: s[9] != null ? Math.round(s[9] * 3.6) : null,
           heading: s[10] != null ? Math.round(s[10]) : null,
           onGround: s[8],
           lastContact: s[4],
+          totalFlights: data.states.length,
         };
       }
-    } catch(e) { continue; }
-  }
+    }
+  } catch(e) { /* fall through */ }
   return null;
 }
 
 function displayLiveFlight(data, flightNum) {
   document.getElementById('flightNumDisp').textContent = data.callsign || flightNum;
+
+  const fd = DATA.flightData;
+  const routeInfo = fd.number && fd.number.toUpperCase() === flightNum.toUpperCase()
+    ? `${fd.departure || '???'} ✈️ ${fd.arrival || '???'}`
+    : `${flightNum}`;
   document.getElementById('flightRoute').textContent = data.country
-    ? `🌍 Über ${data.country} · ICAO: ${data.icao24?.toUpperCase() || '?'}`
-    : 'Live-Daten empfangen';
+    ? `${routeInfo} · 🌍 Über ${data.country}`
+    : `📍 Live getrackt aus ${data.totalFlights?.toLocaleString() || '?'} Flügen`;
 
   const status = data.onGround ? 'Gelandet ✅' : 'In der Luft ✈️';
   const statusClass = data.onGround ? 'landed' : 'airborne';
@@ -1318,7 +1333,16 @@ async function trackFlight() {
     displayLiveFlight(live, flightNum);
     startAutoRefresh(flightNum);
   } else {
-    showFlightNotFound(flightNum);
+    document.getElementById('flightLiveData').style.display = 'none';
+    document.getElementById('flightRadar').classList.remove('show');
+    document.getElementById('flightNumDisp').textContent = flightNum;
+    document.getElementById('flightRoute').textContent = '🔍 Nicht im OpenSky-Netzwerk gefunden';
+    document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot unknown"></span>Nicht im freien Netzwerk sichtbar`;
+    document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">🔍</div><div class="cd-label">Nicht gefunden</div>`;
+    // Show small note that FR24 still works
+    const liveDiv = document.getElementById('flightLiveData');
+    liveDiv.style.display = 'grid';
+    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1"><div class="live-label">💡 Tipp</div><div class="live-val" style="font-size:.8rem;color:var(--muted)">OpenSky zeigt nur Flüge mit öffentlichem Transponder-Signal. Öffne FlightRadar24 für volle Abdeckung.</div></div>`;
     stopAutoRefresh();
   }
 
