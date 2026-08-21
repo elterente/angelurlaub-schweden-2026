@@ -143,8 +143,15 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .plan-card .plan-head .plan-date{font-size:.7rem;color:var(--muted)}
 .plan-card .plan-body{padding:12px 14px;display:flex;flex-direction:column;flex:1;min-height:0}
 .plan-card .plan-body .plan-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.plan-title-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text);font-size:.9rem;font-weight:700;font-family:'Inter',sans-serif;width:100%;box-sizing:border-box;outline:none;transition:.2s;margin-bottom:6px}
+.plan-title-input:focus{border-color:var(--water)}
+.plan-focus-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--muted);font-size:.75rem;font-family:'Inter',sans-serif;width:100%;box-sizing:border-box;outline:none;transition:.2s}
+.plan-focus-input:focus{border-color:var(--water)}
+
 .plan-card .plan-body .plan-focus{font-size:.75rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .plan-card .plan-body .plan-boat{font-size:.75rem;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+
+/* Custom scrollbar */
 .plan-card .plan-body .plan-boat .label{color:var(--muted)}
 .plan-card .plan-body .plan-boat .val{color:var(--text);font-weight:500}
 .plan-card .plan-body .plan-meal{font-size:.75rem;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:4px}
@@ -869,6 +876,8 @@ function renderPlan() {
     const mb = (saved[key] && saved[key].motorboot !== undefined) ? saved[key].motorboot : p.boats.motorboot;
     const ka = (saved[key] && saved[key].kanu !== undefined) ? saved[key].kanu : p.boats.kanu;
     const meal = (saved[key] && saved[key].meal) || p.meal;
+    const tt = (saved[key] && saved[key].title) || p.title;
+    const fc = (saved[key] && saved[key].focus) || p.focus;
     
     const mealOpts = mealOptions.map(m =>
       `<option value="${m}"${m === meal ? ' selected' : ''}>${m}</option>`
@@ -880,8 +889,8 @@ function renderPlan() {
         <div class="plan-date">${dayName} ${p.date}</div>
       </div>
       <div class="plan-body">
-        <div class="plan-title">${p.title}</div>
-        <div class="plan-focus">🎯 ${p.focus}</div>
+        <input class="plan-title-input" value="${tt}" placeholder="Titel z.B. Erster Angel-Tag 🎣" data-key="${key}" data-field="title" oninput="savePlanEdit(this)">
+        <div class="plan-boat"><span class="label">🎯</span><input class="plan-focus-input" value="${fc}" placeholder="z.B. Nördliche Buchten (Hecht)" data-key="${key}" data-field="focus" oninput="savePlanEdit(this)"></div>
         <div class="plan-boat"><span class="label">🚤</span><input class="plan-inline-input" value="${mb}" placeholder="z.B. Tadzio + elterente" data-key="${key}" data-field="motorboot" oninput="savePlanEdit(this)"></div>
         <div class="plan-boat"><span class="label">🛶</span><input class="plan-inline-input" value="${ka}" placeholder="z.B. Hubcio + Benzo" data-key="${key}" data-field="kanu" oninput="savePlanEdit(this)"></div>
         <div class="plan-boat"><span class="label">🍽️</span><select class="plan-meal-select" data-key="${key}" data-field="meal" onchange="savePlanEdit(this)">${mealOpts}</select></div>
@@ -913,8 +922,8 @@ function copyPlan() {
     const key = 'day' + p.day;
     const e = savedEdits[key] || {};
     const note = savedNotes[key] || '';
-    text += `📅 TAG ${p.day} — ${p.date} | ${p.title}\n`;
-    text += `🎯 ${p.focus}\n`;
+    text += `📅 TAG ${p.day} — ${p.date} | ${e.title || p.title}\n`;
+    text += `🎯 ${e.focus || p.focus}\n`;
     text += `🚤 Boot: ${e.motorboot || p.boats.motorboot}\n`;
     text += `🛶 Kanu: ${e.kanu || p.boats.kanu}\n`;
     text += `🍽️ Essen: ${e.meal || p.meal}\n`;
