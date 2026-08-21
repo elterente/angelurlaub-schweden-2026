@@ -209,6 +209,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .collapse-trigger.open .collapse-icon{transform:rotate(90deg)}
 .collapse-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
 .collapse-body.open{max-height:800px}
+.collapse-body.open.tall{max-height:2500px}
 .collapse-body-inner{padding:10px 0}
 
 /* Car Rental */
@@ -256,21 +257,50 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .flight-track-btn:hover{background:var(--gold);color:#000;transform:translateY(-1px)}
 .flight-track-btn.tracking{background:var(--danger);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.flight-radar{margin-top:12px;border-radius:8px;overflow:hidden;display:none}
-.flight-radar.show{display:block}
-.flight-radar iframe{width:100%;height:360px;border:0}
+
+/* === FLIGHT DASHBOARD === */
+.flight-dashboard{display:none}
+.flight-dashboard.show{display:block}
+.flight-dash-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.flight-dash-header .dash-flight-id{font-size:1.6rem;font-weight:800;color:var(--gold)}
+.flight-dash-header .dash-status{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px}
+.flight-dash-header .dash-status .dot{width:10px;height:10px;border-radius:50%}
+.flight-dash-header .dash-status .dot.green{background:var(--birch)}
+.flight-dash-header .dash-status .dot.yellow{background:var(--gold);animation:pulse 2s infinite}
+.flight-dash-header .dash-status .dot.blue{background:var(--water)}
+.flight-dash-header .dash-status .dot.red{background:var(--danger)}
+.flight-dash-header .dash-status .dot.gray{background:var(--muted)}
+
+.flight-dash-route{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.flight-dash-route .airport{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;min-width:80px}
+.flight-dash-route .airport .code{font-size:1.3rem;font-weight:800;color:var(--gold)}
+.flight-dash-route .airport .city{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.flight-dash-route .airport .time{font-size:.75rem;color:var(--text);margin-top:2px}
+.flight-dash-route .dash-arrow{color:var(--water);font-size:1.2rem;flex-shrink:0}
+.flight-dash-route .dash-arrow .line{display:block;width:40px;height:2px;background:var(--border);border-radius:1px;margin:4px 0}
+
+.flight-dash-progress{margin-bottom:14px}
+.flight-dash-progress .prog-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;position:relative;margin-bottom:6px}
+.flight-dash-progress .prog-fill{height:100%;background:linear-gradient(90deg,var(--water),var(--gold));border-radius:3px;transition:width 30s linear}
+.flight-dash-progress .prog-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted)}
+
+.flight-dash-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.flight-dash-metric{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.flight-dash-metric .met-val{font-size:1.3rem;font-weight:700;color:var(--gold)}
+.flight-dash-metric .met-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+.flight-dash-map{margin-bottom:10px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.flight-dash-map iframe{width:100%;height:300px;border:0}
+
+.flight-dash-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.flight-dash-actions .flight-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:7px 12px;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;flex:1;min-width:160px}
+.flight-dash-actions .flight-input:focus{border-color:var(--water)}
+
 .fr24-banner{display:none;width:100%;margin-top:10px;padding:14px 20px;background:linear-gradient(135deg,var(--water),#3a6a7a);border:1px solid var(--gold);border-radius:10px;color:#fff;font-size:.95rem;font-weight:700;text-align:center;text-decoration:none;font-family:'Inter',sans-serif;transition:.2s;align-items:center;justify-content:center;gap:10px}
 .fr24-banner.show{display:flex}
 .fr24-banner:hover{background:linear-gradient(135deg,var(--gold),#c9a040);color:#000;transform:translateY(-2px);box-shadow:0 4px 20px rgba(230,184,94,.3)}
 .fr24-banner .fr24-arrow{font-size:1.2rem;transition:.2s}
 .fr24-banner:hover .fr24-arrow{transform:translateX(4px)}
-.flight-live-data{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
-.flight-live-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center}
-.flight-live-item .live-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.flight-live-item .live-val{font-size:.9rem;font-weight:600;color:var(--text);margin-top:2px}
-.flight-status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
-.flight-status-dot.scheduled{background:var(--water)}
-.flight-status-dot.boarding,.flight-status-dot.airborne{background:var(--gold);animation:pulse 2s infinite}
 .flight-status-dot.landed{background:var(--birch)}
 .flight-status-dot.delayed{background:var(--danger)}
 .flight-status-dot.unknown{background:var(--muted)}
@@ -351,35 +381,62 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 </section>
 
 <!-- ============================================================ -->
-<!-- ✈️ FLUG-TRACKER                                           -->
+<!-- ============================================================ -->
+<!-- ✈️ FLUG-TRACKER — DASHBOARD                               -->
 <!-- ============================================================ -->
 <section class="section" id="flight">
 <h2><span class="icon">✈️</span> Flug-Tracker</h2>
 <div class="collapse-section">
 <button class="collapse-trigger" onclick="toggleCollapse(this)">✈️ Benzos Flug nach Hamburg <span class="collapse-icon">▶</span></button>
-<div class="collapse-body"><div class="collapse-body-inner"><div class="card">
-<div class="flight-card">
-  <div class="flight-main">
-    <div class="flight-num" id="flightNumDisp">—</div>
-    <div class="flight-route" id="flightRoute"></div>
-    <div class="flight-time" id="flightTime"></div>
-    <div class="flight-actions">
-      <input class="flight-input" id="flightNumInput" placeholder="Flugnummer z.B. LH1234" maxlength="10" onkeydown="if(event.key==='Enter')trackFlight()">
-      <button class="flight-track-btn" id="trackBtn" onclick="trackFlight()">📡 Tracken</button>
-          </div>
-        </div>
-        <div class="flight-countdown" id="flightCountdown">
-          <div class="cd-num">--</div>
-          <div class="cd-label">Flug eingeben</div>
-        </div>
-      </div>
-      <div class="flight-live-data" id="flightLiveData" style="display:none"></div>
-      <div class="flight-radar" id="flightRadar">
-        <iframe id="fr24Frame" src="" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <a class="fr24-banner" id="fr24Banner" href="#" target="_blank" rel="noopener">
-        📡 Diesen Flug auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>
-      </a>
+<div class="collapse-body tall"><div class="collapse-body-inner"><div class="card">
+
+<!-- TIME SETTINGS + INPUT -->
+<div class="flight-dash-actions" id="flightInputRow" style="margin-bottom:16px">
+  <input class="flight-input" id="flightNumInput" placeholder="Flugnummer z.B. LH402" maxlength="8" onkeydown="if(event.key==='Enter')trackFlight()" style="flex:3;min-width:140px">
+  <input class="flight-input" type="datetime-local" id="depTimeInput" style="flex:2;min-width:180px;font-size:.8rem" onchange="updateDepTime()">
+  <input class="flight-input" type="datetime-local" id="arrTimeInput" style="flex:2;min-width:180px;font-size:.8rem" onchange="updateArrTime()">
+  <button class="flight-track-btn" id="trackBtn" onclick="trackFlight()" style="flex:1;min-width:90px">📡 Track</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="flight-dashboard" id="flightDashboard">
+  <div class="flight-dash-header">
+    <div class="dash-flight-id" id="dashFlightId">—</div>
+    <div class="dash-status"><span class="dot blue" id="dashStatusDot"></span><span id="dashStatusText">Geplant</span></div>
+  </div>
+
+  <div class="flight-dash-route">
+      <div class="airport"><input class="flight-input" id="dashDepCode" value="MUC" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" onchange="updateRoute()"><div class="city" id="dashDepCity">München</div><div class="time" id="dashDepTime">—</div></div>
+      <div class="dash-arrow">✈️<div class="line"></div></div>
+      <div class="airport"><input class="flight-input" id="dashArrCode" value="HAM" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" onchange="updateRoute()"><div class="city" id="dashArrCity">Hamburg</div><div class="time" id="dashArrTime">—</div></div>
+    </div>
+
+  <div class="flight-dash-progress">
+    <div class="prog-bar"><div class="prog-fill" id="dashProgBar" style="width:0%"></div></div>
+    <div class="prog-labels"><span id="dashProgStart">—</span><span id="dashProgPct">0%</span><span id="dashProgEnd">—</span></div>
+  </div>
+
+  <div class="flight-dash-metrics" id="dashMetrics">
+    <div class="flight-dash-metric"><div class="met-val" id="metAltitude">? m</div><div class="met-lbl">Höhe</div></div>
+    <div class="flight-dash-metric"><div class="met-val" id="metSpeed">? km/h</div><div class="met-lbl">Geschwindigkeit</div></div>
+    <div class="flight-dash-metric"><div class="met-val" id="metDistance">? km</div><div class="met-lbl">Reststrecke</div></div>
+    <div class="flight-dash-metric"><div class="met-val" id="metETA">—</div><div class="met-lbl">Vorauss. Ankunft</div></div>
+    <div class="flight-dash-metric"><div class="met-val" id="metCountdown">—</div><div class="met-lbl" id="metCountdownLbl">bis Abflug</div></div>
+    <div class="flight-dash-metric"><div class="met-val" id="metHeading">—</div><div class="met-lbl">Kurs</div></div>
+  </div>
+
+  <div class="flight-dash-map"><iframe id="dashMapFrame" src="" allowfullscreen loading="lazy"></iframe></div>
+
+  <a class="fr24-banner show" id="fr24Banner" href="#" target="_blank" rel="noopener">
+    📡 Diesen Flug auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>
+  </a>
+
+  <div class="flight-dash-actions" style="margin-top:10px">
+    <input class="flight-input" id="flightNumInput2" placeholder="Anderen Flug tracken..." maxlength="10" onkeydown="if(event.key==='Enter'){document.getElementById('flightNumInput').value=this.value;trackFlight()}">
+    <button class="flight-track-btn" style="font-size:.7rem" onclick="document.getElementById('flightNumInput').value=document.getElementById('flightNumInput2').value;trackFlight()">📡 Neu tracken</button>
+  </div>
+</div>
+
 </div></div></div>
 </div>
 </section>
@@ -1194,205 +1251,200 @@ function swapCurrency() {
 loadFxRate();
 
 // ============================
-// ✈️ FLUG-TRACKER (ADS‑B Exchange Radar + OpenSky Telemetrie)
+// ============================
+// ✈️ FLUG-TRACKER — DASHBOARD
 // ============================
 let flightRefreshTimer = null;
-let currentTrackedFlight = null;
 
-// IATA → ICAO airline code mapping
-const ICAO_MAP = {
-  LH:'DLH', EW:'EWG', FR:'RYR', U2:'EZY', BA:'BAW', AF:'AFR',
-  KL:'KLM', EK:'UAE', TK:'THY', OS:'AUA', LX:'SWR', SN:'BEL',
-  SK:'SAS', AY:'FIN', LO:'LOT', OK:'CSA', JU:'ASL', OU:'CTN',
-  AZ:'ITY', IB:'IBE', TP:'TAP', EI:'EIN', DY:'NOZ', D8:'NSZ',
-  PC:'PGT', XQ:'SXS', W6:'WZZ', VY:'VLG', I2:'IBS', UX:'AEA',
-  QR:'QTR', EY:'ETD', SQ:'SIA', CX:'CPA', NH:'ANA', JL:'JAL',
-  UA:'UAL', DL:'DAL', AA:'AAL', WN:'SWA', B6:'JBU', AC:'ACA',
-  SU:'AFL', S7:'SBI', CA:'CCA', MU:'CES', CZ:'CSN', HU:'CHH',
-};
+// Airport database
+const FLIGHT_ROUTES = {
+  MUC:{city:'München',lat:48.3538,lon:11.7861}, HAM:{city:'Hamburg',lat:53.6304,lon:9.9882},
+  FRA:{city:'Frankfurt',lat:50.0379,lon:8.5622}, BER:{city:'Berlin',lat:52.5597,lon:13.2877},
+  DUS:{city:'Düsseldorf',lat:51.2809,lon:6.7573}, CGN:{city:'Köln/Bonn',lat:50.8661,lon:7.1427},
+  STR:{city:'Stuttgart',lat:48.6899,lon:9.2219}, ZRH:{city:'Zürich',lat:47.4582,lon:8.5555},
+  VIE:{city:'Wien',lat:48.1103,lon:16.5697}, LHR:{city:'London',lat:51.4700,lon:-0.4543},
+  CDG:{city:'Paris',lat:49.0097,lon:2.5479}, AMS:{city:'Amsterdam',lat:52.3105,lon:4.7683},
+  ARN:{city:'Stockholm',lat:59.6519,lon:17.9186}, CPH:{city:'Kopenhagen',lat:55.6181,lon:12.6562},
+  VXO:{city:'Växjö',lat:56.9291,lon:14.7280},
+    EWR:{city:'Newark',lat:40.6895,lon:-74.1745},
+    JFK:{city:'New York',lat:40.6413,lon:-73.7781},
+  };
 
-function buildCallsigns(flightNum) {
-  const match = flightNum.match(/^([A-Z]{2,3})?(\d+)$/);
-  if (!match) return [flightNum];
-  const iata = match[1] || '';
-  const num = match[2];
-  const icao = ICAO_MAP[iata] || iata;
-  const results = [];
-  if (icao && icao !== iata) results.push(icao + num);
-  if (iata) results.push(iata + num);
-  results.push(flightNum);
-  return results;
+const ICAO_MAP={LH:'DLH',EW:'EWG',FR:'RYR',U2:'EZY',BA:'BAW',AF:'AFR',KL:'KLM',SK:'SAS',AY:'FIN',LO:'LOT',DY:'NOZ',UA:'UAL',DL:'DAL',AA:'AAL',QR:'QTR',EK:'UAE',TK:'THY'};
+
+function buildCallsigns(flightNum){
+  const m=flightNum.match(/^([A-Z]{2,3})?(\d+)$/);
+  if(!m)return[flightNum];
+  const iata=m[1]||'',num=m[2],icao=ICAO_MAP[iata]||iata,r=[];
+  if(icao&&icao!==iata)r.push(icao+num);
+  if(iata)r.push(iata+num);
+  r.push(flightNum);return r;
 }
 
-function showAdsxEmbed(lat, lon, zoom) {
-  const radar = document.getElementById('flightRadar');
-  const frame = document.getElementById('fr24Frame');
-  radar.classList.add('show');
-  frame.src = `https://globe.adsbexchange.com/?lat=${lat}&lon=${lon}&zoom=${zoom}`;
+function haversineKm(lat1,lon1,lat2,lon2){
+  const R=6371,d2r=Math.PI/180,dlat=(lat2-lat1)*d2r,dlon=(lon2-lon1)*d2r;
+  const a=Math.sin(dlat/2)**2+Math.cos(lat1*d2r)*Math.cos(lat2*d2r)*Math.sin(dlon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-async function tryOpenSkyTelemetry(flightNum) {
-  const liveDiv = document.getElementById('flightLiveData');
-  liveDiv.style.display = 'grid';
-  liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
-    <div class="live-label">🔍 OpenSky-Telemetrie</div>
-    <div class="live-val" style="font-size:.8rem;color:var(--muted)">Suche Live-Daten…</div>
-  </div>`;
+function headingToCardinal(deg){
+  const d=['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return d[Math.round(deg/22.5)%16];
+}
 
-  try {
-    const callsigns = buildCallsigns(flightNum);
-    const url = 'https://opensky-network.org/api/states/all?time=0';
-    const res = await fetch(url, {signal: AbortSignal.timeout(15000)});
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!data.states || data.states.length === 0) throw new Error('empty');
+// ============ DASHBOARD UPDATE ============
 
-    const targets = new Set(callsigns.map(c => c.trim().toUpperCase()));
-    for (const s of data.states) {
-      const cs = (s[1] || '').trim().toUpperCase();
-      const matched = [...targets].some(t => cs === t || cs.startsWith(t));
-      if (matched) {
-        // Found! Show telemetry
-        const alt = s[7] != null ? Math.round(s[7]) : null;
-        const spd = s[9] != null ? Math.round(s[9] * 3.6) : null;
-        const hdg = s[10] != null ? Math.round(s[10]) : null;
-        const hdgStr = hdg !== null ? `${hdg}° ${headingToCardinal(hdg)}` : '?';
+function updateDashboard(fd,os){
+  document.getElementById('flightDashboard').classList.add('show');
+  const now=new Date(),dep=new Date(fd.depTime),arr=new Date(fd.arrTime);
+  const rDist=fd.routeDistance||(fd.depLat&&fd.arrLat?Math.round(haversineKm(fd.depLat,fd.depLon,fd.arrLat,fd.arrLon)):600);
 
-        liveDiv.style.display = 'grid';
-        liveDiv.innerHTML = `
-          <div class="flight-live-item"><div class="live-label">📏 Höhe</div><div class="live-val">${alt !== null ? alt+'m' : '? m'}</div></div>
-          <div class="flight-live-item"><div class="live-label">🚀 Geschw.</div><div class="live-val">${spd !== null ? spd+' km/h' : '? km/h'}</div></div>
-          <div class="flight-live-item"><div class="live-label">🧭 Kurs</div><div class="live-val">${hdgStr}</div></div>
-          <div class="flight-live-item"><div class="live-label">📍 Position</div><div class="live-val">${s[6]?.toFixed(3)}°, ${s[5]?.toFixed(3)}°</div></div>
-          <div class="flight-live-item"><div class="live-label">🛬 Status</div><div class="live-val">${s[8] ? 'Am Boden' : 'In der Luft ✈️'}</div></div>
-          <div class="flight-live-item"><div class="live-label">🕐 Kontakt</div><div class="live-val">${timeAgo(s[4])}</div></div>
-        `;
+  document.getElementById('dashFlightId').textContent=fd.number||'—';
+  const sd=document.getElementById('dashStatusDot'),st=document.getElementById('dashStatusText');
+  if(now<dep){sd.className='dot blue';st.textContent='Geplant';}
+  else if(now<arr){sd.className='dot yellow';st.textContent=os&&os.alt?'In der Luft ✈️ (Live)':'In der Luft ✈️';}
+  else{sd.className='dot green';st.textContent='Gelandet ✅';}
 
-        // Update name and route
-        document.getElementById('flightNumDisp').textContent = (s[1] || flightNum).trim();
-        document.getElementById('flightRoute').textContent = `🌍 Über ${s[2]} · OpenSky Live`;
-        const dotClass = s[8] ? 'landed' : 'airborne';
-        document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot ${dotClass}"></span>${s[8] ? 'Gelandet ✅' : 'In der Luft ✈️'}`;
-        document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${alt !== null ? alt+'m' : '?'}</div><div class="cd-label">Höhe (OpenSky)</div>`;
+  const dc=fd.departure||'MUC',ac=fd.arrival||'HAM';
+  document.getElementById('dashDepCode').value=dc;
+  document.getElementById('dashDepCity').textContent=(FLIGHT_ROUTES[dc]||{}).city||fd.depCity||dc;
+  document.getElementById('dashDepTime').textContent=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dashArrCode').value=ac;
+  document.getElementById('dashArrCity').textContent=(FLIGHT_ROUTES[ac]||{}).city||fd.arrCity||ac;
+  document.getElementById('dashArrTime').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
 
-        // Also update ADS-B map to center on flight position
-        if (s[6] != null && s[5] != null) {
-          showAdsxEmbed(s[6], s[5], 10);  // zoom in tight on the aircraft
-        }
+  const totalMs=arr-dep,elapsedMs=now-dep;
+  let pct=totalMs>0?Math.min(100,Math.max(0,(elapsedMs/totalMs)*100)):0;
+  document.getElementById('dashProgBar').style.width=pct+'%';
+  document.getElementById('dashProgPct').textContent=Math.round(pct)+'%';
+  document.getElementById('dashProgStart').textContent=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dashProgEnd').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
 
-        return true; // success
+  const leftKm=Math.round(rDist*(1-pct/100));
+  document.getElementById('metAltitude').textContent=os&&os.alt?os.alt+'m':'? m';
+  document.getElementById('metSpeed').textContent=os&&os.spd?os.spd+' km/h':'~750 km/h';
+  document.getElementById('metDistance').textContent=leftKm>0?leftKm+' km':'0 km';
+  document.getElementById('metETA').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+
+  if(now<dep){
+    const diff=dep-now;
+    document.getElementById('metCountdown').textContent=Math.floor(diff/864e5)+'d '+Math.floor((diff%864e5)/36e5)+'h';
+    document.getElementById('metCountdownLbl').textContent='bis Abflug';
+  }else if(now<arr){
+    const diff=arr-now;
+    document.getElementById('metCountdown').textContent=Math.floor(diff/36e5)+'h '+Math.floor((diff%36e5)/6e4)+'m';
+    document.getElementById('metCountdownLbl').textContent='bis Ankunft';
+  }else{
+    document.getElementById('metCountdown').textContent='✓';
+    document.getElementById('metCountdownLbl').textContent='Angekommen';
+  }
+
+  document.getElementById('metHeading').textContent=os&&os.hdg?os.hdg+'° '+headingToCardinal(os.hdg):'—';
+
+  const mlat=os&&os.lat?os.lat:((fd.depLat||48)+(fd.arrLat||53))/2;
+  const mlon=os&&os.lon?os.lon:((fd.depLon||11)+(fd.arrLon||10))/2;
+  document.getElementById('dashMapFrame').src='https://globe.adsbexchange.com/?lat='+mlat.toFixed(2)+'&lon='+mlon.toFixed(2)+'&zoom='+(os&&os.lat?7:6);
+
+  const fr24=document.getElementById('fr24Banner');
+  if(fd.number){
+    fr24.href='https://www.flightradar24.com/data/flights/'+fd.number.toLowerCase();
+    fr24.classList.add('show');
+    fr24.innerHTML='📡 <strong>'+fd.number+'</strong> auf FlightRadar24 anzeigen — Position, Route, Höhe, Speed <span class="fr24-arrow">→</span>';
+  }
+}
+
+// ============ LIVE TRACKING ============
+
+async function tryOpenSkyTelemetry(flightNum){
+  try{
+    const callsigns=buildCallsigns(flightNum);
+    const res=await fetch('https://opensky-network.org/api/states/all?time=0',{signal:AbortSignal.timeout(12000)});
+    if(!res.ok)return null;
+    const data=await res.json();
+    if(!data.states||!data.states.length)return null;
+    const targets=new Set(callsigns.map(c=>c.trim().toUpperCase()));
+    for(const s of data.states){
+      const cs=(s[1]||'').trim().toUpperCase();
+      if([...targets].some(t=>cs===t||cs.startsWith(t))){
+        return{alt:s[7]!=null?Math.round(s[7]):null,spd:s[9]!=null?Math.round(s[9]*3.6):null,hdg:s[10]!=null?Math.round(s[10]):null,lat:s[6],lon:s[5],onGround:s[8],country:s[2]};
       }
     }
-    // Not in dataset
-    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
-      <div class="live-label">📡 OpenSky-Telemetrie</div>
-      <div class="live-val" style="font-size:.8rem;color:var(--amber)">Flug nicht im OpenSky-Netzwerk — aber ADS‑B Radar zeigt alle Flüge ↓</div>
-    </div>`;
-    return false;
-  } catch(e) {
-    // CORS or network error
-    liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
-      <div class="live-label">📡 OpenSky-Telemetrie</div>
-      <div class="live-val" style="font-size:.8rem;color:var(--amber)">OpenSky blockiert Cross-Origin — Telemetrie via ADS‑B Radar unten ↓</div>
-    </div>`;
-    return false;
-  }
+  }catch(e){}
+  return null;
 }
 
-async function trackFlight() {
-  const input = document.getElementById('flightNumInput').value.trim();
-  if (!input) return;
-
-  const flightNum = input.toUpperCase();
-  currentTrackedFlight = flightNum;
-  const btn = document.getElementById('trackBtn');
-
-  btn.textContent = '🔍 Suche…';
-  btn.classList.add('tracking');
-  btn.disabled = true;
-
-  // Save
-  saveFlightNum(flightNum);
-
-  // 1. Show flight info immediately
-  document.getElementById('flightNumDisp').textContent = flightNum;
-  document.getElementById('flightRoute').textContent = '📡 Tracking aktiv';
-  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Live-Tracking läuft`;
-  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">📡</div><div class="cd-label">Tracking</div>`;
-
-  // 2. ALWAYS show ADS-B Exchange live radar embed (works in iframes!)
-  showAdsxEmbed(52.5, 13.4, 7);
-
-  // 3. FR24 banner — prominent link below the radar
-  const fr24 = document.getElementById('fr24Banner');
-  fr24.href = `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}`;
-  fr24.classList.add('show');
-  fr24.innerHTML = `📡 <strong>${flightNum}</strong> auf FlightRadar24 anzeigen — Position, Route, Höhe, Speed <span class="fr24-arrow">→</span>`;
-
-  // 4. Try OpenSky telemetry as bonus
-  await tryOpenSkyTelemetry(flightNum);
-
-  btn.textContent = '📡 Tracken';
-  btn.classList.remove('tracking');
-  btn.disabled = false;
-
-  // Auto-refresh OpenSky every 45s
-  startAutoRefresh(flightNum);
+function updateDepTime(){
+  const fd=DATA.flightData;fd.depTime=document.getElementById('depTimeInput').value;
+  localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  updateDashboard(fd,null);
+}
+function updateArrTime(){
+  const fd=DATA.flightData;fd.arrTime=document.getElementById('arrTimeInput').value;
+  localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  updateDashboard(fd,null);
+}
+function updateRoute(){
+  const fd=DATA.flightData;
+  fd.departure=document.getElementById('dashDepCode').value.toUpperCase();
+  fd.arrival=document.getElementById('dashArrCode').value.toUpperCase();
+  const dep=FLIGHT_ROUTES[fd.departure], arr=FLIGHT_ROUTES[fd.arrival];
+  if(dep){fd.depLat=dep.lat;fd.depLon=dep.lon;fd.depCity=dep.city;}
+  if(arr){fd.arrLat=arr.lat;fd.arrLon=arr.lon;fd.arrCity=arr.city;}
+  if(dep&&arr)fd.routeDistance=Math.round(haversineKm(dep.lat,dep.lon,arr.lat,arr.lon));
+  document.getElementById('dashDepCity').textContent=(dep||{}).city||fd.departure;
+  document.getElementById('dashArrCity').textContent=(arr||{}).city||fd.arrival;
+  localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  updateDashboard(fd,null);
 }
 
-function startAutoRefresh(flightNum) {
+async function trackFlight(){
+  const input=document.getElementById('flightNumInput').value.trim();
+  if(!input)return;
+  const flightNum=input.toUpperCase(),btn=document.getElementById('trackBtn');
+  btn.textContent='🔍 Suche…';btn.classList.add('tracking');btn.disabled=true;
+
+  const fd=DATA.flightData;fd.number=flightNum;
+  // Read times from inputs if user changed them
+  const depInp=document.getElementById('depTimeInput').value;
+  const arrInp=document.getElementById('arrTimeInput').value;
+  if(depInp)fd.depTime=depInp; if(arrInp)fd.arrTime=arrInp;
+  localStorage.setItem('angel-flight',JSON.stringify({number:flightNum,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  document.getElementById('flightNumInput2').value=flightNum;
+
+  updateDashboard(fd,null);
+  const live=await tryOpenSkyTelemetry(flightNum);
+  if(live)updateDashboard(fd,live);
+
+  btn.textContent='📡 Track';btn.classList.remove('tracking');btn.disabled=false;
+  startAutoRefresh(fd);
+}
+
+function startAutoRefresh(fd){
   stopAutoRefresh();
-  flightRefreshTimer = setInterval(async () => {
-    await tryOpenSkyTelemetry(flightNum);
-  }, 45000);
+  flightRefreshTimer=setInterval(async()=>{const live=await tryOpenSkyTelemetry(fd.number);if(live)updateDashboard(fd,live);},45000);
 }
 
-function stopAutoRefresh() {
-  if (flightRefreshTimer) { clearInterval(flightRefreshTimer); flightRefreshTimer = null; }
+function stopAutoRefresh(){
+  if(flightRefreshTimer){clearInterval(flightRefreshTimer);flightRefreshTimer=null;}
 }
 
-function headingToCardinal(deg) {
-  const dirs = ['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-  return dirs[Math.round(deg / 22.5) % 16];
-}
-
-function timeAgo(ts) {
-  if (!ts) return '?';
-  const diff = Math.max(0, Math.floor((Date.now()/1000) - ts));
-  if (diff < 60) return `${diff}s`;
-  if (diff < 3600) return `${Math.floor(diff/60)}m`;
-  return `${Math.floor(diff/3600)}h ${Math.floor((diff%3600)/60)}m`;
-}
-
-function saveFlightNum(val) {
-  const fd = DATA.flightData;
-  fd.number = val.toUpperCase().trim();
-  localStorage.setItem('angel-flight', JSON.stringify({
-    number: fd.number,
-    depTime: fd.depTime,
-    arrTime: fd.arrTime,
-    departure: fd.departure,
-    arrival: fd.arrival,
-    airline: fd.airline,
-  }));
-}
-
-// Init: load saved flight & show ready state
-(function initFlight() {
-  const saved = JSON.parse(localStorage.getItem('angel-flight') || '{}');
-  if (saved.number) {
-    document.getElementById('flightNumInput').value = saved.number;
-    document.getElementById('flightNumDisp').textContent = saved.number;
-    document.getElementById('flightRoute').textContent = `${saved.departure || '???'} ✈️ ${saved.arrival || '???'} · ${saved.airline || ''}`;
-    document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Gespeichert — 📡 Tracken klicken`;
-    document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${saved.number}</div><div class="cd-label">Zum Tracken</div>`;
-    // Show FR24 banner even without live tracking active
-    const fr24 = document.getElementById('fr24Banner');
-    fr24.href = `https://www.flightradar24.com/data/flights/${saved.number.toLowerCase()}`;
-    fr24.classList.add('show');
-    fr24.innerHTML = `📡 <strong>${saved.number}</strong> auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>`;
-  }
+// Init
+(function initFlight(){
+  const saved=JSON.parse(localStorage.getItem('angel-flight')||'{}');
+  const fd=DATA.flightData;
+  if(saved.number)fd.number=saved.number;
+  if(saved.depTime)fd.depTime=saved.depTime;
+  if(saved.arrTime)fd.arrTime=saved.arrTime;
+  if(saved.departure)fd.departure=saved.departure;
+  if(saved.arrival)fd.arrival=saved.arrival;
+  document.getElementById('flightNumInput').value=fd.number||'';
+  document.getElementById('depTimeInput').value=fd.depTime;
+  document.getElementById('arrTimeInput').value=fd.arrTime;
+  document.getElementById('dashDepCode').value=fd.departure||'MUC';
+  document.getElementById('dashArrCode').value=fd.arrival||'HAM';
+  updateDashboard(fd,null);
 })();
+
 </script>
 </body>
 </html>

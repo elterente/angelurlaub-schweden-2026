@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitarbeiter des Monats — Åsnen Crew</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f0f;--surface:#111a1a;--border:#1a2a2a;--gold:#e6b85e;--water:#4a7c8c;--birch:#5a8a5a;--text:#d0d8d8;--muted:#667777;--danger:#e76f6f;--glitch:#00ff88}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow-x:hidden}
+.container{max-width:700px;width:100%;padding:20px}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:30px;position:relative}
+.header .badge{display:inline-block;background:var(--surface);border:1px solid var(--border);padding:6px 16px;border-radius:4px;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px}
+.header h1{font-size:2rem;font-weight:800;color:var(--gold);letter-spacing:-1px;margin-bottom:4px}
+.header h1 .glitch-text{color:var(--glitch)}
+.header .sub{font-size:.8rem;color:var(--muted);letter-spacing:2px}
+.header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:16px auto 0;opacity:.5}
+
+/* WINNER CARD */
+.winner-card{background:var(--surface);border:2px solid var(--gold);border-radius:12px;padding:30px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 0 40px rgba(230,184,94,.08)}
+.winner-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 50% 0%,rgba(230,184,94,.06) 0%,transparent 60%);pointer-events:none}
+.winner-card .trophy{font-size:4rem;margin-bottom:8px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.winner-card .crown{font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:4px;margin-bottom:4px}
+.winner-card .name{font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.winner-card .title{font-size:.9rem;color:var(--text);margin-bottom:12px}
+.winner-card .reason{font-size:.8rem;color:var(--muted);font-style:italic;max-width:400px;margin:0 auto;line-height:1.6}
+.winner-card .stats{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.winner-card .stat{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;text-align:center;min-width:70px}
+.winner-card .stat .val{font-size:1.2rem;font-weight:700;color:var(--gold)}
+.winner-card .stat .lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* RUNNERS-UP */
+.runners{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.runner-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;transition:.2s;position:relative}
+.runner-card:hover{border-color:var(--water);transform:translateY(-2px)}
+.runner-card .pos{position:absolute;top:8px;right:10px;font-size:.65rem;color:var(--muted);font-weight:700}
+.runner-card .emoji{font-size:2rem;margin-bottom:4px}
+.runner-card .runner-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.runner-card .runner-reason{font-size:.65rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.runner-card .runner-stat{font-size:.7rem;color:var(--water);margin-top:4px;font-weight:600}
+
+/* HALL OF FAME */
+.hall{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px}
+.hall h3{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:3px;margin-bottom:14px;text-align:center}
+.hall table{width:100%;border-collapse:collapse;font-size:.75rem}
+.hall th{text-align:left;padding:6px 10px;color:var(--gold);font-weight:600;border-bottom:1px solid var(--border);font-size:.65rem;text-transform:uppercase;letter-spacing:1px}
+.hall td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--muted)}
+.hall td:first-child{color:var(--text);font-weight:500}
+.hall td:last-child{text-align:right;color:var(--gold);font-weight:600}
+.hall tr:hover td{background:rgba(74,124,140,.04)}
+
+/* CATEGORIES */
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.cat-card .cat-icon{font-size:1.5rem;margin-bottom:4px}
+.cat-card .cat-title{font-size:.7rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.cat-card .cat-winner{font-size:.75rem;color:var(--gold)}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid var(--border)}
+.footer p{font-size:.65rem;color:var(--muted);line-height:1.8}
+.footer .fineprint{font-size:.6rem;opacity:.5}
+
+/* Glitch overlay */
+@keyframes glitch{0%,100%{opacity:.03}50%{opacity:.06}}
+.glitch-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,.02) 2px,rgba(0,255,136,.02) 4px);animation:glitch 8s infinite}
+
+/* Compact */
+@media(max-width:500px){
+  .runners{grid-template-columns:1fr}
+  .winner-card{padding:20px}
+  .winner-card .name{font-size:1.5rem}
+  .cats{grid-template-columns:1fr 1fr}
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--water)}
+</style>
+</head>
+<body>
+<div class="glitch-overlay"></div>
+<div class="container">
+
+<div class="header">
+  <div class="badge">ÅSNEN CREW · HR-ABTEILUNG</div>
+  <h1>Mitarbeiter<br><span class="glitch-text">des Monats</span></h1>
+  <div class="sub">August 2026</div>
+</div>
+
+<div class="winner-card">
+  <div class="trophy">🏆</div>
+  <div class="crown">✦ Employee of the Month ✦</div>
+  <div class="name">Tadzio 🦁</div>
+  <div class="title">Chief Organisator & Ferienhaus-Finder</div>
+  <div class="reason">„Hat ein Haus mit Motorboot UND Kanu gefunden. Während andere noch überlegten, ob Schweden oder Holland — hatte Tadzio schon die Fähre gebucht."</div>
+  <div class="stats">
+    <div class="stat"><div class="val">7</div><div class="lbl">Buchungen</div></div>
+    <div class="stat"><div class="val">∞</div><div class="lbl">Geduld</div></div>
+    <div class="stat"><div class="val">1</div><div class="lbl">Kanu extra</div></div>
+  </div>
+</div>
+
+<div class="runners">
+  <div class="runner-card">
+    <div class="pos">#2</div>
+    <div class="emoji">🥈</div>
+    <div class="runner-name">Hubcio 🎺</div>
+    <div class="runner-reason">Bereit, um 3 Uhr nachts die Fähre zu entern. Keine Beschwerden. Trompete eingepackt.</div>
+    <div class="runner-stat">⏰ Bereitschaft: 24/7</div>
+  </div>
+  <div class="runner-card">
+    <div class="pos">#3</div>
+    <div class="emoji">🥉</div>
+    <div class="runner-name">Benzo 🧑‍🦲</div>
+    <div class="runner-reason">Fliegt extra aus Hamburg ein. Widmet sich dem wichtigen Thema: Whisky-Vorräte.</div>
+    <div class="runner-stat">✈️ Anreise: 800 km</div>
+  </div>
+  <div class="runner-card" style="opacity:.6">
+    <div class="pos">#4</div>
+    <div class="emoji">😈</div>
+    <div class="runner-name">elterente</div>
+    <div class="runner-reason">Hat eine Website gebaut. Während der Arbeit. Für den Angelurlaub. Respekt.</div>
+    <div class="runner-stat">💻 Commits: zahlreich</div>
+  </div>
+</div>
+
+<div class="hall">
+  <h3>📜 Hall of Fame — Bisherige Gewinner</h3>
+  <table>
+    <tr><th>Monat</th><th>Mitarbeiter</th><th>Auszeichnung</th><th>⭐</th></tr>
+    <tr><td>August 2026</td><td>Tadzio 🦁</td><td>Haus mit Boot gefunden</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>Juli 2026</td><td>elterente 😈</td><td>„Warum nicht Schweden?" gesagt</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>Juni 2026</td><td>Hubcio 🎺</td><td>Trompete als Angelzubehör deklariert</td><td>⭐⭐⭐</td></tr>
+    <tr><td>Mai 2026</td><td colspan="3" style="text-align:center;color:var(--muted)">— noch kein Urlaub geplant —</td></tr>
+    <tr><td>April 2026</td><td>Benzo 🧑‍🦲</td><td>Zugesagt ohne zu wissen was kommt</td><td>⭐⭐⭐⭐⭐</td></tr>
+  </table>
+</div>
+
+<div class="cats">
+  <div class="cat-card">
+    <div class="cat-icon">🎣</div>
+    <div class="cat-title">Bester Angler</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+  <div class="cat-card">
+    <div class="cat-icon">🍺</div>
+    <div class="cat-title">Bierkapitän</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+  <div class="cat-card">
+    <div class="cat-icon">😴</div>
+    <div class="cat-title">Längster Schläfer</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+  <div class="cat-card">
+    <div class="cat-icon">🔥</div>
+    <div class="cat-title">Grillmeister</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+  <div class="cat-card">
+    <div class="cat-icon">🗺️</div>
+    <div class="cat-title">Bester Navigator</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+  <div class="cat-card">
+    <div class="cat-icon">📸</div>
+    <div class="cat-title">Bestes Beweisfoto</div>
+    <div class="cat-winner">noch offen</div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>🏢 Åsnen Crew HR · Fålaboda 7, 362 95 Urshult</p>
+  <p>Diese Auszeichnung wurde vom unabhängigen Komitee für angelbezogene Leistungen vergeben.</p>
+  <p class="fineprint">Das Komitee besteht aus A.I.D.A. · Beschwerden bitte an /dev/null · Änderungen vorbehalten, je nachdem wer den größten Hecht fängt</p>
+</div>
+
+</div>
+</body>
+</html>
