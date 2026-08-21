@@ -153,6 +153,12 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .plan-card .plan-body .plan-note:focus{border-color:var(--water);background:rgba(74,124,140,.08)}
 .plan-card .plan-body .plan-note::placeholder{color:var(--muted);opacity:.5}
 
+.plan-inline-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text);font-size:.75rem;font-family:'Inter',sans-serif;width:100%;box-sizing:border-box;outline:none;transition:.2s}
+.plan-inline-input:focus{border-color:var(--water)}
+.plan-meal-select{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--amber);font-size:.75rem;font-family:'Inter',sans-serif;width:100%;box-sizing:border-box;outline:none;transition:.2s;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6'%3E%3Cpath d='M0 0l4 6 4-6z' fill='%238899aa'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
+.plan-meal-select:focus{border-color:var(--water)}
+.plan-meal-select option{background:var(--surface);color:var(--text)}
+
 /* Custom scrollbar for dark theme */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -842,23 +848,31 @@ setTimeout(() => {
 // ============================
 function renderPlan() {
   const grid = document.getElementById('planGrid');
+  const saved = JSON.parse(localStorage.getItem('angel-plan-edits') || '{}');
   const savedNotes = JSON.parse(localStorage.getItem('angel-plan-notes') || '{}');
   const today = new Date().toISOString().slice(0,10);
   const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-  const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  
+  const mealOptions = [
+    'Grillen 🥩','Frischer Fisch 🐟','Pasta 🍝','Picknick 🧺',
+    'Fischsuppe 🥣','Feuertopf 🔥','Pizza 🍕','Resteverwertung ♻️',
+    'Selbst kochen 👨‍🍳','Auswärts essen 🍽️'
+  ];
   
   grid.innerHTML = DATA.dailyPlan.map(p => {
     const dt = new Date(p.date.replace('.','/') + '/2026');
     const dayName = dayNames[dt.getDay()];
     const todayStr = today.slice(8,10) + '.' + today.slice(5,7) + '.';
     const isToday = p.date === todayStr;
-    const noteKey = 'day' + p.day;
-    const note = savedNotes[noteKey] || '';
+    const key = 'day' + p.day;
+    const note = savedNotes[key] || '';
+    const mb = (saved[key] && saved[key].motorboot !== undefined) ? saved[key].motorboot : p.boats.motorboot;
+    const ka = (saved[key] && saved[key].kanu !== undefined) ? saved[key].kanu : p.boats.kanu;
+    const meal = (saved[key] && saved[key].meal) || p.meal;
     
-    // Simple weather guess based on date (early Sep = good fishing in Sweden)
-    const dayOfMonth = parseInt(p.date.split('.')[0]);
-    let rating = { level: 'good', label: '🎣 Prima' };
-    if (dayOfMonth >= 10) { rating = { level: 'ok', label: '🌦️ Solide' }; }
+    const mealOpts = mealOptions.map(m =>
+      `<option value="${m}"${m === meal ? ' selected' : ''}>${m}</option>`
+    ).join('');
     
     return `<div class="plan-card${isToday?' today':''}" style="${isToday?'border-color:var(--gold);box-shadow:0 0 8px rgba(230,184,94,.15)':''}">
       <div class="plan-head">
@@ -868,13 +882,20 @@ function renderPlan() {
       <div class="plan-body">
         <div class="plan-title">${p.title}</div>
         <div class="plan-focus">🎯 ${p.focus}</div>
-        <div class="plan-boat"><span class="label">🚤</span><span class="val">${p.boats.motorboot}</span></div>
-        <div class="plan-boat"><span class="label">🛶</span><span class="val">${p.boats.kanu}</span></div>
-        <div class="plan-meal">🍽️ ${p.meal}</div>
-        <textarea class="plan-note" placeholder="Deine Notiz für diesen Tag..." data-key="${noteKey}" oninput="savePlanNote(this)">${note}</textarea>
+        <div class="plan-boat"><span class="label">🚤</span><input class="plan-inline-input" value="${mb}" placeholder="z.B. Tadzio + elterente" data-key="${key}" data-field="motorboot" oninput="savePlanEdit(this)"></div>
+        <div class="plan-boat"><span class="label">🛶</span><input class="plan-inline-input" value="${ka}" placeholder="z.B. Hubcio + Benzo" data-key="${key}" data-field="kanu" oninput="savePlanEdit(this)"></div>
+        <div class="plan-boat"><span class="label">🍽️</span><select class="plan-meal-select" data-key="${key}" data-field="meal" onchange="savePlanEdit(this)">${mealOpts}</select></div>
+        <textarea class="plan-note" placeholder="Deine Notiz für diesen Tag..." data-key="${key}" oninput="savePlanNote(this)">${note}</textarea>
       </div>
     </div>`;
   }).join('');
+}
+
+function savePlanEdit(el) {
+  const edits = JSON.parse(localStorage.getItem('angel-plan-edits') || '{}');
+  if (!edits[el.dataset.key]) edits[el.dataset.key] = {};
+  edits[el.dataset.key][el.dataset.field] = el.value;
+  localStorage.setItem('angel-plan-edits', JSON.stringify(edits));
 }
 
 function savePlanNote(el) {
@@ -884,17 +905,19 @@ function savePlanNote(el) {
 }
 
 function copyPlan() {
+  const savedEdits = JSON.parse(localStorage.getItem('angel-plan-edits') || '{}');
   const savedNotes = JSON.parse(localStorage.getItem('angel-plan-notes') || '{}');
   let text = '📋 *ÅSNEN 2026 — TAGESPLAN*\n' + '='.repeat(30) + '\n\n';
   
   DATA.dailyPlan.forEach(p => {
-    const noteKey = 'day' + p.day;
-    const note = savedNotes[noteKey] || '';
+    const key = 'day' + p.day;
+    const e = savedEdits[key] || {};
+    const note = savedNotes[key] || '';
     text += `📅 TAG ${p.day} — ${p.date} | ${p.title}\n`;
     text += `🎯 ${p.focus}\n`;
-    text += `🚤 Boot: ${p.boats.motorboot}\n`;
-    text += `🛶 Kanu: ${p.boats.kanu}\n`;
-    text += `🍽️ Essen: ${p.meal}\n`;
+    text += `🚤 Boot: ${e.motorboot || p.boats.motorboot}\n`;
+    text += `🛶 Kanu: ${e.kanu || p.boats.kanu}\n`;
+    text += `🍽️ Essen: ${e.meal || p.meal}\n`;
     if (note) text += `📝 Notiz: ${note}\n`;
     text += '—'.repeat(20) + '\n';
   });
