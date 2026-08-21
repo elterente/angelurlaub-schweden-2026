@@ -238,6 +238,37 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .quick-convert{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .quick-convert button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;font-size:.7rem;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
 .quick-convert button:hover{background:var(--water);color:#fff;border-color:var(--water)}
+
+/* Flight Tracker */
+.flight-card{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.flight-card .flight-main{flex:1;min-width:200px}
+.flight-card .flight-main .flight-num{font-size:1.2rem;font-weight:700;color:var(--gold)}
+.flight-card .flight-main .flight-route{font-size:.85rem;color:var(--text);margin-top:2px}
+.flight-card .flight-main .flight-time{font-size:.75rem;color:var(--muted);margin-top:4px}
+.flight-card .flight-countdown{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center;min-width:120px}
+.flight-card .flight-countdown .cd-num{font-size:1.5rem;font-weight:700;color:var(--gold)}
+.flight-card .flight-countdown .cd-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.flight-card .flight-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.flight-card .flight-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:6px 10px;color:var(--text);font-size:.8rem;font-family:'Inter',sans-serif;outline:none;transition:.2s}
+.flight-card .flight-input:focus{border-color:var(--water)}
+.flight-card .flight-input::placeholder{color:var(--muted);opacity:.5}
+.flight-track-btn{background:var(--water);border:none;color:#fff;padding:6px 14px;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;white-space:nowrap}
+.flight-track-btn:hover{background:var(--gold);color:#000;transform:translateY(-1px)}
+.flight-track-btn.tracking{background:var(--danger);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.flight-radar{margin-top:12px;border-radius:8px;overflow:hidden;display:none}
+.flight-radar.show{display:block}
+.flight-radar iframe{width:100%;height:300px;border:0}
+.flight-live-data{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.flight-live-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center}
+.flight-live-item .live-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.flight-live-item .live-val{font-size:.9rem;font-weight:600;color:var(--text);margin-top:2px}
+.flight-status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.flight-status-dot.scheduled{background:var(--water)}
+.flight-status-dot.boarding,.flight-status-dot.airborne{background:var(--gold);animation:pulse 2s infinite}
+.flight-status-dot.landed{background:var(--birch)}
+.flight-status-dot.delayed{background:var(--danger)}
+.flight-status-dot.unknown{background:var(--muted)}
 </style>
 </head>
 <body>
@@ -265,6 +296,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <ul>
 <li><a href="#team">👥 Team</a></li>
 <li><a href="#route">🚗 Route</a></li>
+<li><a href="#flight">✈️ Flug</a></li>
 <li><a href="#house">🏠 Haus</a></li>
 <li><a href="#fishing">🎣 Angeln</a></li>
 <li><a href="#map">🗺️ Karte</a></li>
@@ -310,6 +342,38 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <div class="collapse-section">
 <button class="collapse-trigger" onclick="toggleCollapse(this)">📍 Ziel <span class="collapse-icon">▶</span></button>
 <div class="collapse-body"><div class="collapse-body-inner"><div class="card"><p><strong>Fålaboda 7</strong>, 362 95 Urshult, Småland, Schweden</p><p style="margin-top:4px;font-size:.8rem;color:var(--muted)">Gesamtstrecke: ca. 1.150 km | Fahrtzeit: ca. 17h (inkl. Fähre)</p></div></div></div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ✈️ FLUG-TRACKER                                           -->
+<!-- ============================================================ -->
+<section class="section" id="flight">
+<h2><span class="icon">✈️</span> Flug-Tracker</h2>
+<div class="collapse-section">
+<button class="collapse-trigger" onclick="toggleCollapse(this)">✈️ Benzos Flug nach Hamburg <span class="collapse-icon">▶</span></button>
+<div class="collapse-body"><div class="collapse-body-inner"><div class="card">
+<div class="flight-card">
+  <div class="flight-main">
+    <div class="flight-num" id="flightNumDisp">—</div>
+    <div class="flight-route" id="flightRoute"></div>
+    <div class="flight-time" id="flightTime"></div>
+    <div class="flight-actions">
+      <input class="flight-input" id="flightNumInput" placeholder="Flugnummer z.B. LH1234" maxlength="10" onkeydown="if(event.key==='Enter')trackFlight()">
+      <button class="flight-track-btn" id="trackBtn" onclick="trackFlight()">📡 Tracken</button>
+      <a class="nm-btn" id="fr24Link" href="#" target="_blank" rel="noopener">🔗 FlightRadar24</a>
+    </div>
+  </div>
+  <div class="flight-countdown" id="flightCountdown">
+    <div class="cd-num">--</div>
+    <div class="cd-label" id="flightStatusLabel">Flug eingeben</div>
+  </div>
+</div>
+<div class="flight-live-data" id="flightLiveData" style="display:none"></div>
+<div class="flight-radar" id="flightRadar">
+  <iframe id="fr24Frame" src="" allowfullscreen loading="lazy"></iframe>
+</div>
+</div></div></div>
 </div>
 </section>
 
@@ -564,6 +628,15 @@ const DATA = {
       bestSpot: 'Verkrautete Buchten, Schlammzonen, flache Bereiche mit 1-3m Tiefe',
       img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tinca_tinca.jpeg/400px-Tinca_tinca.jpeg' },
   ],
+
+  flightData: {
+    number: '',          // Benzos Flugnummer (z.B. 'EW7465')
+    departure: 'MUC',    // Abflughafen
+    arrival: 'HAM',      // Ankunft Hamburg
+    depTime: '2026-09-04T16:00:00',  // Abflug (editierbar)
+    arrTime: '2026-09-04T17:30:00',  // Ankunft (editierbar)
+    airline: 'Eurowings',
+  },
 
   costs: [
     { item: 'Ferienhaus + Motorboot', amount: '800 €' },
@@ -1112,6 +1185,204 @@ function swapCurrency() {
 
 // Load rate on page init
 loadFxRate();
+
+// ============================
+// ✈️ FLUG-TRACKER (Live via OpenSky API)
+// ============================
+let flightRefreshTimer = null;
+
+// IATA → ICAO airline code mapping
+const ICAO_MAP = {
+  LH:'DLH', EW:'EWG', FR:'RYR', U2:'EZY', BA:'BAW', AF:'AFR',
+  KL:'KLM', EK:'UAE', TK:'THY', OS:'AUA', LX:'SWR', SN:'BEL',
+  SK:'SAS', AY:'FIN', LO:'LOT', OK:'CSA', JU:'ASL', OU:'CTN',
+  AZ:'ITY', IB:'IBE', TP:'TAP', EI:'EIN', DY:'NOZ', D8:'NSZ',
+  PC:'PGT', XQ:'SXS', W6:'WZZ', VY:'VLG', I2:'IBS', UX:'AEA',
+  QR:'QTR', EY:'ETD', SQ:'SIA', CX:'CPA', NH:'ANA', JL:'JAL',
+  UA:'UAL', DL:'DAL', AA:'AAL', WN:'SWA', B6:'JBU', AC:'ACA',
+  SU:'AFL', S7:'SBI', CA:'CCA', MU:'CES', CZ:'CSN', HU:'CHH',
+};
+
+function buildCallsigns(flightNum) {
+  const match = flightNum.match(/^([A-Z]{2,3})?(\d+)$/);
+  if (!match) return [flightNum];
+  const iata = match[1] || '';
+  const num = match[2];
+  const icao = ICAO_MAP[iata] || iata;
+  const results = [];
+  if (icao && icao !== iata) results.push(icao + num);  // DLH1234
+  if (iata) results.push(iata + num);                     // LH1234
+  results.push(flightNum);                                // raw input
+  return results;
+}
+
+async function queryOpenSky(callsigns) {
+  // OpenSky free API — try each callsign variant
+  for (const cs of callsigns) {
+    try {
+      const url = `https://opensky-network.org/api/states/all?time=0&icao24=&callsign=${cs}`;
+      const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data.states && data.states.length > 0) {
+        const s = data.states[0];
+        return {
+          callsign: (s[1] || cs).trim(),
+          icao24: s[0],
+          country: s[2],
+          lon: s[5], lat: s[6],
+          baroAlt: s[7] != null ? Math.round(s[7]) : null,
+          velocity: s[9] != null ? Math.round(s[9] * 3.6) : null, // m/s → km/h
+          heading: s[10] != null ? Math.round(s[10]) : null,
+          onGround: s[8],
+          lastContact: s[4],
+        };
+      }
+    } catch(e) { continue; }
+  }
+  return null;
+}
+
+function displayLiveFlight(data, flightNum) {
+  document.getElementById('flightNumDisp').textContent = data.callsign || flightNum;
+  document.getElementById('flightRoute').textContent = data.country
+    ? `🌍 Über ${data.country} · ICAO: ${data.icao24?.toUpperCase() || '?'}`
+    : 'Live-Daten empfangen';
+
+  const status = data.onGround ? 'Gelandet ✅' : 'In der Luft ✈️';
+  const statusClass = data.onGround ? 'landed' : 'airborne';
+  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot ${statusClass}"></span>${status}`;
+
+  // Countdown card
+  const alt = data.baroAlt !== null ? `${data.baroAlt}m` : '? m';
+  const spd = data.velocity !== null ? `${data.velocity} km/h` : '? km/h';
+  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${alt}</div><div class="cd-label">Höhe</div>`;
+
+  // Live data grid
+  const hdg = data.heading !== null ? `${data.heading}° ${headingToCardinal(data.heading)}` : '?';
+  document.getElementById('flightLiveData').style.display = 'grid';
+  document.getElementById('flightLiveData').innerHTML = `
+    <div class="flight-live-item"><div class="live-label">📏 Höhe</div><div class="live-val">${alt}</div></div>
+    <div class="flight-live-item"><div class="live-label">🚀 Geschwindigkeit</div><div class="live-val">${spd}</div></div>
+    <div class="flight-live-item"><div class="live-label">🧭 Kurs</div><div class="live-val">${hdg}</div></div>
+    <div class="flight-live-item"><div class="live-label">📍 Position</div><div class="live-val">${data.lat?.toFixed(3)}°, ${data.lon?.toFixed(3)}°</div></div>
+    <div class="flight-live-item"><div class="live-label">🛬 Am Boden</div><div class="live-val">${data.onGround ? 'Ja' : 'Nein'}</div></div>
+    <div class="flight-live-item"><div class="live-label">🕐 Letzter Kontakt</div><div class="live-val">${timeAgo(data.lastContact)}</div></div>
+  `;
+
+  // FR24 embed
+  const radar = document.getElementById('flightRadar');
+  const frame = document.getElementById('fr24Frame');
+  radar.classList.add('show');
+  frame.src = `https://www.flightradar24.com/simple_index.php?lat=${data.lat}&lon=${data.lon}&reg=${data.callsign}`;
+
+  // FR24 link
+  const fr24 = document.getElementById('fr24Link');
+  fr24.href = `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}`;
+  fr24.style.opacity = '1';
+  fr24.style.pointerEvents = 'auto';
+}
+
+function showFlightNotFound(flightNum) {
+  document.getElementById('flightNumDisp').textContent = flightNum || '—';
+  document.getElementById('flightRoute').textContent = '🔍 Kein Live-Flug gefunden';
+  document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot unknown"></span>Nicht in der Luft`;
+  document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">🔍</div><div class="cd-label">Kein Signal</div>`;
+  document.getElementById('flightLiveData').style.display = 'none';
+  document.getElementById('flightRadar').classList.remove('show');
+
+  const fr24 = document.getElementById('fr24Link');
+  fr24.href = flightNum ? `https://www.flightradar24.com/data/flights/${flightNum.toLowerCase()}` : '#';
+  fr24.style.opacity = flightNum ? '1' : '.4';
+  fr24.style.pointerEvents = flightNum ? 'auto' : 'none';
+}
+
+async function trackFlight() {
+  const input = document.getElementById('flightNumInput').value.trim();
+  if (!input) return;
+
+  const flightNum = input.toUpperCase();
+  const btn = document.getElementById('trackBtn');
+
+  btn.textContent = '🔍 Suche...';
+  btn.classList.add('tracking');
+  btn.disabled = true;
+
+  // Save
+  saveFlightNum(flightNum);
+
+  const callsigns = buildCallsigns(flightNum);
+  const live = await queryOpenSky(callsigns);
+
+  if (live) {
+    displayLiveFlight(live, flightNum);
+    startAutoRefresh(flightNum);
+  } else {
+    showFlightNotFound(flightNum);
+    stopAutoRefresh();
+  }
+
+  btn.textContent = '📡 Tracken';
+  btn.classList.remove('tracking');
+  btn.disabled = false;
+}
+
+function startAutoRefresh(flightNum) {
+  stopAutoRefresh();
+  flightRefreshTimer = setInterval(async () => {
+    const callsigns = buildCallsigns(flightNum);
+    const live = await queryOpenSky(callsigns);
+    if (live) {
+      displayLiveFlight(live, flightNum);
+    }
+  }, 30000); // refresh every 30s
+}
+
+function stopAutoRefresh() {
+  if (flightRefreshTimer) { clearInterval(flightRefreshTimer); flightRefreshTimer = null; }
+}
+
+function headingToCardinal(deg) {
+  const dirs = ['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
+function timeAgo(ts) {
+  if (!ts) return '?';
+  const diff = Math.max(0, Math.floor((Date.now()/1000) - ts));
+  if (diff < 60) return `${diff}s`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m`;
+  return `${Math.floor(diff/3600)}h ${Math.floor((diff%3600)/60)}m`;
+}
+
+function saveFlightNum(val) {
+  const fd = DATA.flightData;
+  fd.number = val.toUpperCase().trim();
+  localStorage.setItem('angel-flight', JSON.stringify({
+    number: fd.number,
+    depTime: fd.depTime,
+    arrTime: fd.arrTime,
+    departure: fd.departure,
+    arrival: fd.arrival,
+    airline: fd.airline,
+  }));
+}
+
+// Init: load saved flight & show status (no auto-track)
+(function initFlight() {
+  const saved = JSON.parse(localStorage.getItem('angel-flight') || '{}');
+  if (saved.number) {
+    document.getElementById('flightNumInput').value = saved.number;
+    document.getElementById('flightNumDisp').textContent = saved.number;
+    document.getElementById('flightRoute').textContent = `${saved.departure || '???'} ✈️ ${saved.arrival || '???'} · ${saved.airline || ''}`;
+    document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Gespeichert — 📡 Tracken klicken`;
+    document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${saved.number}</div><div class="cd-label">Zum Tracken</div>`;
+    const fr24 = document.getElementById('fr24Link');
+    fr24.href = `https://www.flightradar24.com/data/flights/${saved.number.toLowerCase()}`;
+    fr24.style.opacity = '1';
+    fr24.style.pointerEvents = 'auto';
+  }
+})();
 </script>
 </body>
 </html>
