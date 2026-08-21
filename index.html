@@ -1187,7 +1187,7 @@ function swapCurrency() {
 loadFxRate();
 
 // ============================
-// ✈️ FLUG-TRACKER (FR24 Embed + OpenSky Telemetry)
+// ✈️ FLUG-TRACKER (ADS‑B Exchange Radar + OpenSky Telemetrie)
 // ============================
 let flightRefreshTimer = null;
 let currentTrackedFlight = null;
@@ -1217,12 +1217,11 @@ function buildCallsigns(flightNum) {
   return results;
 }
 
-function showFR24Embed(flightNum) {
+function showAdsxEmbed(lat, lon, zoom) {
   const radar = document.getElementById('flightRadar');
   const frame = document.getElementById('fr24Frame');
   radar.classList.add('show');
-  // FR24 simple iframe embed — always works, no CORS issues
-  frame.src = 'https://www.flightradar24.com/simple_index.php?lat=52.5&lon=13.4&reg=' + encodeURIComponent(flightNum);
+  frame.src = `https://globe.adsbexchange.com/?lat=${lat}&lon=${lon}&zoom=${zoom}`;
 }
 
 async function tryOpenSkyTelemetry(flightNum) {
@@ -1269,9 +1268,9 @@ async function tryOpenSkyTelemetry(flightNum) {
         document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot ${dotClass}"></span>${s[8] ? 'Gelandet ✅' : 'In der Luft ✈️'}`;
         document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">${alt !== null ? alt+'m' : '?'}</div><div class="cd-label">Höhe (OpenSky)</div>`;
 
-        // Also update FR24 to focus on position
+        // Also update ADS-B map to center on flight position
         if (s[6] != null && s[5] != null) {
-          document.getElementById('fr24Frame').src = `https://www.flightradar24.com/simple_index.php?lat=${s[6]}&lon=${s[5]}&reg=${encodeURIComponent((s[1]||'').trim())}`;
+          showAdsxEmbed(s[6], s[5], 10);  // zoom in tight on the aircraft
         }
 
         return true; // success
@@ -1279,15 +1278,15 @@ async function tryOpenSkyTelemetry(flightNum) {
     }
     // Not in dataset
     liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
-      <div class="live-label">📡 OpenSky</div>
-      <div class="live-val" style="font-size:.8rem;color:var(--amber)">Flug nicht im OpenSky-Netzwerk — aber FR24-Radar ist live ↓</div>
+      <div class="live-label">📡 OpenSky-Telemetrie</div>
+      <div class="live-val" style="font-size:.8rem;color:var(--amber)">Flug nicht im OpenSky-Netzwerk — aber ADS‑B Radar zeigt alle Flüge ↓</div>
     </div>`;
     return false;
   } catch(e) {
     // CORS or network error
     liveDiv.innerHTML = `<div class="flight-live-item" style="grid-column:1/-1">
-      <div class="live-label">📡 OpenSky</div>
-      <div class="live-val" style="font-size:.8rem;color:var(--amber)">OpenSky blockiert Cross-Origin-Requests. Telemetrie nur im FR24-Radar ↓</div>
+      <div class="live-label">📡 OpenSky-Telemetrie</div>
+      <div class="live-val" style="font-size:.8rem;color:var(--amber)">OpenSky blockiert Cross-Origin — Telemetrie via ADS‑B Radar unten ↓</div>
     </div>`;
     return false;
   }
@@ -1314,8 +1313,8 @@ async function trackFlight() {
   document.getElementById('flightTime').innerHTML = `<span class="flight-status-dot scheduled"></span>Live-Tracking läuft`;
   document.getElementById('flightCountdown').innerHTML = `<div class="cd-num">📡</div><div class="cd-label">Tracking</div>`;
 
-  // 2. ALWAYS show FR24 embed (no CORS, always works)
-  showFR24Embed(flightNum);
+  // 2. ALWAYS show ADS-B Exchange live radar embed (works in iframes!)
+  showAdsxEmbed(52.5, 13.4, 7);
 
   // 3. FR24 external link
   const fr24 = document.getElementById('fr24Link');
