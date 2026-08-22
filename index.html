@@ -406,9 +406,9 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
   </div>
 
   <div class="flight-dash-route">
-      <div class="airport"><input class="flight-input" id="dashDepCode" value="MUC" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" onchange="updateRoute()"><div class="city" id="dashDepCity">München</div><div class="time" id="dashDepTime">—</div></div>
+      <div class="airport"><input class="flight-input" id="dashDepCode" value="MUC" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" oninput="updateRoute()"><div class="city" id="dashDepCity">München</div><div class="time" id="dashDepTime">—</div></div>
       <div class="dash-arrow">✈️<div class="line"></div></div>
-      <div class="airport"><input class="flight-input" id="dashArrCode" value="HAM" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" onchange="updateRoute()"><div class="city" id="dashArrCity">Hamburg</div><div class="time" id="dashArrTime">—</div></div>
+      <div class="airport"><input class="flight-input" id="dashArrCode" value="HAM" maxlength="4" style="font-size:1.3rem;font-weight:800;color:var(--gold);text-align:center;width:80px;padding:4px;border:none" oninput="updateRoute()"><div class="city" id="dashArrCity">Hamburg</div><div class="time" id="dashArrTime">—</div></div>
     </div>
 
   <div class="flight-dash-progress">
@@ -1378,11 +1378,13 @@ async function tryOpenSkyTelemetry(flightNum){
 function updateDepTime(){
   const fd=DATA.flightData;fd.depTime=document.getElementById('depTimeInput').value;
   localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  autoFillFlightFromRoute();
   updateDashboard(fd,null);
 }
 function updateArrTime(){
   const fd=DATA.flightData;fd.arrTime=document.getElementById('arrTimeInput').value;
   localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
+  autoFillFlightFromRoute();
   updateDashboard(fd,null);
 }
 function updateRoute(){
@@ -1396,8 +1398,9 @@ function updateRoute(){
   document.getElementById('dashDepCity').textContent=(dep||{}).city||fd.departure;
   document.getElementById('dashArrCity').textContent=(arr||{}).city||fd.arrival;
   localStorage.setItem('angel-flight',JSON.stringify({number:fd.number,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
-  updateDashboard(fd,null);
-}
+    autoFillFlightFromRoute();
+    updateDashboard(fd,null);
+  }
 
 // Flight route database — auto-fills departure/arrival
 const FLIGHT_DB = {
@@ -1406,6 +1409,76 @@ const FLIGHT_DB = {
   'EW7465': { dep:'MUC', arr:'HAM', depH:'16', depM:'00', arrH:'17', arrM:'30', arrNextDay:false },
   'LH1234': { dep:'FRA', arr:'BER', depH:'08', depM:'30', arrH:'09', arrM:'40', arrNextDay:false },
 };
+
+// Reverse lookup: given dep/arr/times, find matching flight number
+function findFlightByRoute(dep, arr, depTime, arrTime) {
+  const dDep = (dep || '').toUpperCase();
+  const dArr = (arr || '').toUpperCase();
+  if (!dDep || !dArr) return null;
+
+  // Parse times from datetime-local values (format: "2026-08-21T23:55")
+  let depH = null, depM = null, arrH = null, arrM = null;
+  if (depTime) {
+    const m = depTime.match(/T(\d{2}):(\d{2})$/);
+    if (m) { depH = m[1]; depM = m[2]; }
+  }
+  if (arrTime) {
+    const m = arrTime.match(/T(\d{2}):(\d{2})$/);
+    if (m) { arrH = m[1]; arrM = m[2]; }
+  }
+
+  // Search FLIGHT_DB: route match ALWAYS wins, times only for disambiguation
+  const candidates = [];
+  for (const [flight, route] of Object.entries(FLIGHT_DB)) {
+    if (route.dep !== dDep || route.arr !== dArr) continue;
+    // Score: lower = better match. Time-proximity bonus (0=perfect, higher=worse)
+    let score = 0;
+    if (depH !== null && arrH !== null) {
+      const dbDepMin = parseInt(route.depH) * 60 + parseInt(route.depM);
+      const dbArrMin = parseInt(route.arrH) * 60 + parseInt(route.arrM);
+      let adjustedArr = dbArrMin; if (route.arrNextDay) adjustedArr += 24 * 60;
+      const inpDepMin = parseInt(depH) * 60 + parseInt(depM);
+      const inpArrMin = parseInt(arrH) * 60 + parseInt(arrM);
+      score = Math.abs(inpDepMin - dbDepMin) + Math.abs(inpArrMin - adjustedArr);
+    }
+    candidates.push({ flight, score });
+  }
+  if (candidates.length === 1) return candidates[0].flight;  // exact route match, ignore times
+  if (candidates.length > 1) {
+    // Pick the one with closest times
+    candidates.sort((a, b) => a.score - b.score);
+    if (candidates[0].score <= 120) return candidates[0].flight;  // within 2h tolerance
+  }
+  return null; // no match
+}
+
+function autoFillFlightFromRoute() {
+  const dep = document.getElementById('dashDepCode').value;
+  const arr = document.getElementById('dashArrCode').value;
+  const depTime = document.getElementById('depTimeInput').value;
+  const arrTime = document.getElementById('arrTimeInput').value;
+  const flight = findFlightByRoute(dep, arr, depTime, arrTime);
+
+  if (flight) {
+    // Found a match — auto-fill the flight number
+    document.getElementById('flightNumInput').value = flight;
+    document.getElementById('flightNumInput').style.borderColor = 'var(--birch)'; // green border = found
+    document.getElementById('flightNumInput').style.boxShadow = '0 0 6px rgba(90,138,90,.3)';
+    // Also set in data model
+    const fd = DATA.flightData; fd.number = flight;
+    document.getElementById('dashFlightId').textContent = flight;
+    if (!document.getElementById('depTimeInput').value || !document.getElementById('arrTimeInput').value) {
+      // Auto-fill times too since user only set route
+      autoFillRoute(flight);
+    }
+  } else {
+    // No match — clear flight number, indicate "manual"
+    document.getElementById('flightNumInput').value = '';
+    document.getElementById('flightNumInput').style.borderColor = 'var(--border)';
+    document.getElementById('flightNumInput').style.boxShadow = 'none';
+    document.getElementById('flightNumInput').placeholder = dep && arr ? 'Kein bekannter Flug — manuell tracken' : 'Flugnummer';
+  }
+}
 
 function autoFillRoute(flightNum) {
   const route = FLIGHT_DB[flightNum.toUpperCase()];
