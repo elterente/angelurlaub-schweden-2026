@@ -289,8 +289,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .flight-dash-metric .met-val{font-size:1.3rem;font-weight:700;color:var(--gold)}
 .flight-dash-metric .met-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 
-.flight-dash-map{margin-bottom:10px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-.flight-dash-map iframe{width:100%;height:300px;border:0}
+/* Fix Leaflet attribution for dark theme */
 
 .flight-dash-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .flight-dash-actions .flight-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:7px 12px;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:.2s;flex:1;min-width:160px}
@@ -394,7 +393,8 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 <div class="flight-dash-actions" id="flightInputRow" style="margin-bottom:16px">
   <input class="flight-input" id="flightNumInput" placeholder="Flugnummer z.B. LH402" maxlength="8" onkeydown="if(event.key==='Enter')trackFlight()" style="flex:3;min-width:140px">
   <input class="flight-input" type="datetime-local" id="depTimeInput" style="flex:2;min-width:180px;font-size:.8rem" onchange="updateDepTime()">
-  <input class="flight-input" type="datetime-local" id="arrTimeInput" style="flex:2;min-width:180px;font-size:.8rem" onchange="updateArrTime()">
+    <input class="flight-input" type="datetime-local" id="arrTimeInput" style="flex:2;min-width:180px;font-size:.8rem" onchange="updateArrTime()">
+    <span style="font-size:.6rem;color:var(--muted);white-space:nowrap">MESZ<br>UTC+2</span>
   <button class="flight-track-btn" id="trackBtn" onclick="trackFlight()" style="flex:1;min-width:90px">📡 Track</button>
 </div>
 
@@ -425,11 +425,7 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
     <div class="flight-dash-metric"><div class="met-val" id="metHeading">—</div><div class="met-lbl">Kurs</div></div>
   </div>
 
-  <div class="flight-dash-map" id="dashMapContainer">
-    <canvas id="dashMiniRadar" width="800" height="320" style="width:100%;height:auto;background:var(--bg);border-radius:8px"></canvas>
-    <div id="dashRadarLabels" style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);padding:4px 8px"></div>
-  </div>
-
+  
   <a class="fr24-banner show" id="fr24Banner" href="#" target="_blank" rel="noopener">
     📡 Diesen Flug auf FlightRadar24 anzeigen <span class="fr24-arrow">→</span>
   </a>
@@ -697,13 +693,17 @@ const DATA = {
   ],
 
   flightData: {
-    number: '',          // Benzos Flugnummer (z.B. 'EW7465')
-    departure: 'MUC',    // Abflughafen
-    arrival: 'HAM',      // Ankunft Hamburg
-    depTime: '2026-09-04T16:00:00',  // Abflug (editierbar)
-    arrTime: '2026-09-04T17:30:00',  // Ankunft (editierbar)
-    airline: 'Eurowings',
-  },
+      number: '',
+      departure: 'MUC', arrival: 'HAM',
+      depTime: '2026-09-04T16:00:00',
+      arrTime: '2026-09-04T17:30:00',
+      airline: 'Eurowings',
+      depCity: 'München', arrCity: 'Hamburg',
+      depLat: 48.3538, depLon: 11.7861,
+      arrLat: 53.6304, arrLon: 9.9882,
+      routeDistance: 600,
+      timezone: 'Europe/Berlin',
+    },
 
   costs: [
     { item: 'Ferienhaus + Motorboot', amount: '800 €' },
@@ -1271,7 +1271,8 @@ const FLIGHT_ROUTES = {
   VXO:{city:'Växjö',lat:56.9291,lon:14.7280},
     EWR:{city:'Newark',lat:40.6895,lon:-74.1745},
     JFK:{city:'New York',lat:40.6413,lon:-73.7781},
-  };
+        RHO:{city:'Rhodos',lat:36.4054,lon:28.0862},
+      };
 
 const ICAO_MAP={LH:'DLH',EW:'EWG',FR:'RYR',U2:'EZY',BA:'BAW',AF:'AFR',KL:'KLM',SK:'SAS',AY:'FIN',LO:'LOT',DY:'NOZ',UA:'UAL',DL:'DAL',AA:'AAL',QR:'QTR',EK:'UAE',TK:'THY'};
 
@@ -1293,70 +1294,6 @@ function haversineKm(lat1,lon1,lat2,lon2){
 function headingToCardinal(deg){
   const d=['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
   return d[Math.round(deg/22.5)%16];
-}
-
-// ============ MINI-RADAR (Canvas) ============
-
-function drawMiniRadar(fd, os, pct){
-  const c=document.getElementById('dashMiniRadar');
-  const w=c.width, h=c.height, ctx=c.getContext('2d');
-  ctx.clearRect(0,0,w,h);
-
-  const pad=40; // padding
-  const depX=pad, depY=h/2;
-  const arrX=w-pad, arrY=h/2;
-  const progX=depX+(arrX-depX)*(pct/100);
-
-  // Background grid
-  ctx.strokeStyle='rgba(29,53,87,.3)'; ctx.lineWidth=.5;
-  for(let i=0;i<=4;i++){const x=depX+(arrX-depX)*(i/4);ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,h-pad);ctx.stroke();}
-  for(let i=0;i<=3;i++){const y=pad+(h-2*pad)*(i/3);ctx.beginPath();ctx.moveTo(depX,y);ctx.lineTo(arrX,y);ctx.stroke();}
-
-  // Horizon curve (great circle effect)
-  ctx.strokeStyle='rgba(74,124,140,.25)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
-  ctx.beginPath(); ctx.moveTo(depX,depY);
-  const cx=(depX+arrX)/2, cy=depY-(arrX-depX)*.08;
-  ctx.quadraticCurveTo(cx,cy,arrX,arrY);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Progress path (solid)
-  ctx.strokeStyle='rgba(230,184,94,.5)'; ctx.lineWidth=3;
-  ctx.beginPath(); ctx.moveTo(depX,depY);
-  const t=pct/100, midX=depX+(arrX-depX)*t;
-  const midY=depY-(arrX-depX)*.08*4*t*(1-t);
-  ctx.quadraticCurveTo((depX+midX)/2,depY-(midX-depX)*.08*t,midX,midY);
-  ctx.stroke();
-
-  // Departure airport (blue dot)
-  ctx.fillStyle='#4a7c8c'; ctx.beginPath(); ctx.arc(depX,depY,8,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#fff'; ctx.font='bold 8px Inter,sans-serif'; ctx.textAlign='center';
-  ctx.fillText(fd.departure||'DEP',depX,depY+20);
-
-  // Arrival airport (green dot)
-  ctx.fillStyle='#5a8a5a'; ctx.beginPath(); ctx.arc(arrX,arrY,8,0,Math.PI*2); ctx.fill();
-  ctx.fillText(fd.arrival||'ARR',arrX,arrY+20);
-
-  // Current position (gold pulsing)
-  ctx.save();
-  ctx.fillStyle='rgba(230,184,94,.25)'; ctx.beginPath(); ctx.arc(progX,midY,16,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='rgba(230,184,94,.15)'; ctx.beginPath(); ctx.arc(progX,midY,24,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#e6b85e'; ctx.beginPath(); ctx.arc(progX,midY,6,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='#e6b85e'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(progX,midY,10,0,Math.PI*2); ctx.stroke();
-  ctx.restore();
-
-  // Label
-  const altLabel=os&&os.alt?os.alt+'m':'~'+(pct>0?'Reiseflughöhe':'');
-  const spdLabel=os&&os.spd?os.spd+' km/h':'';
-  ctx.fillStyle='#fff'; ctx.font='bold 9px Inter,sans-serif';
-  ctx.fillText('✈ '+fd.number,progX,midY-20);
-  if(altLabel)ctx.fillText(altLabel,progX,midY-8);
-  ctx.fillStyle='var(--muted)'; ctx.font='7px Inter,sans-serif';
-  if(spdLabel)ctx.fillText(spdLabel,progX,midY+16);
-
-  // Distance label
-  document.getElementById('dashRadarLabels').innerHTML=
-    '<span>🛫 '+fd.departure+'</span><span style="color:var(--gold);font-weight:600">'+(pct>0?Math.round(pct)+'%':'')+'</span><span>🛬 '+fd.arrival+'</span>';
 }
 
 // ============ DASHBOARD UPDATE ============
@@ -1409,7 +1346,6 @@ function updateDashboard(fd,os){
   document.getElementById('metHeading').textContent=os&&os.hdg?os.hdg+'° '+headingToCardinal(os.hdg):'—';
 
   // Mini-Radar zeichnen (nur dieser eine Flug!)
-    drawMiniRadar(fd, os, pct);
 
     const fr24=document.getElementById('fr24Banner');
   if(fd.number){
@@ -1463,6 +1399,48 @@ function updateRoute(){
   updateDashboard(fd,null);
 }
 
+// Flight route database — auto-fills departure/arrival
+const FLIGHT_DB = {
+  'BLX538': { dep:'RHO', arr:'ARN', depH:'23', depM:'55', arrH:'02', arrM:'55', arrNextDay:true },
+  'LH402': { dep:'FRA', arr:'EWR', depH:'17', depM:'30', arrH:'01', arrM:'30', arrNextDay:true },
+  'EW7465': { dep:'MUC', arr:'HAM', depH:'16', depM:'00', arrH:'17', arrM:'30', arrNextDay:false },
+  'LH1234': { dep:'FRA', arr:'BER', depH:'08', depM:'30', arrH:'09', arrM:'40', arrNextDay:false },
+};
+
+function autoFillRoute(flightNum) {
+  const route = FLIGHT_DB[flightNum.toUpperCase()];
+  if (!route) return;
+  const fd = DATA.flightData;
+  fd.departure = route.dep;
+  fd.arrival = route.arr;
+  document.getElementById('dashDepCode').value = route.dep;
+  document.getElementById('dashArrCode').value = route.arr;
+  // Update coords from FLIGHT_ROUTES
+  const dep = FLIGHT_ROUTES[route.dep], arr = FLIGHT_ROUTES[route.arr];
+  if (dep) { fd.depLat = dep.lat; fd.depLon = dep.lon; fd.depCity = dep.city; }
+  if (arr) { fd.arrLat = arr.lat; fd.arrLon = arr.lon; fd.arrCity = arr.city; }
+  if (dep && arr) fd.routeDistance = Math.round(haversineKm(dep.lat, dep.lon, arr.lat, arr.lon));
+  document.getElementById('dashDepCity').textContent = (dep || {}).city || route.dep;
+  document.getElementById('dashArrCity').textContent = (arr || {}).city || route.arr;
+  // Auto-set times
+  const now = new Date();
+  let depDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(route.depH), parseInt(route.depM));
+  // If departure already passed today, assume it was yesterday
+  if (depDate > now) depDate.setDate(depDate.getDate() - 1);
+  const arrDate = new Date(depDate);
+  arrDate.setHours(parseInt(route.arrH), parseInt(route.arrM));
+  if (route.arrNextDay) arrDate.setDate(arrDate.getDate() + 1);
+  fd.depTime = toLocalISO(depDate);
+  fd.arrTime = toLocalISO(arrDate);
+  document.getElementById('depTimeInput').value = fd.depTime;
+  document.getElementById('arrTimeInput').value = fd.arrTime;
+}
+
+function toLocalISO(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
 async function trackFlight(){
   const input=document.getElementById('flightNumInput').value.trim();
   if(!input)return;
@@ -1470,8 +1448,9 @@ async function trackFlight(){
   btn.textContent='🔍 Suche…';btn.classList.add('tracking');btn.disabled=true;
 
   const fd=DATA.flightData;fd.number=flightNum;
-  // Read times from inputs if user changed them
-  const depInp=document.getElementById('depTimeInput').value;
+    // Auto-fill route + times from database, then allow user overrides via inputs
+    autoFillRoute(flightNum);
+    const depInp=document.getElementById('depTimeInput').value;
   const arrInp=document.getElementById('arrTimeInput').value;
   if(depInp)fd.depTime=depInp; if(arrInp)fd.arrTime=arrInp;
   localStorage.setItem('angel-flight',JSON.stringify({number:flightNum,depTime:fd.depTime,arrTime:fd.arrTime,departure:fd.departure,arrival:fd.arrival,airline:fd.airline}));
