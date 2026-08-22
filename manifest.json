@@ -1,0 +1,19 @@
+{
+  "name": "Åsnen 2026 — Angelurlaub",
+  "short_name": "Åsnen 2026",
+  "start_url": "/angelurlaub-schweden-2026/index.html",
+  "scope": "/angelurlaub-schweden-2026/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a1628",
+  "theme_color": "#0d1b2a",
+  "description": "Angelurlaub Schweden 2026 — Åsnen-See, Fålaboda 7",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

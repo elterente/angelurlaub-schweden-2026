@@ -304,6 +304,10 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 .flight-status-dot.delayed{background:var(--danger)}
 .flight-status-dot.unknown{background:var(--muted)}
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1b2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <!-- LOGIN OVERLAY -->
@@ -1563,6 +1567,14 @@ function stopAutoRefresh(){
   updateDashboard(fd,null);
 })();
 
+// PWA: Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(err) {
+      console.warn('SW registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
