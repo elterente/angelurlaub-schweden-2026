@@ -10,13 +10,19 @@
 :root{--bg:#0a1628;--surface:#112240;--border:#1d3557;--water:#4a7c8c;--birch:#5a8a5a;--amber:#d4a373;--gold:#e6b85e;--text:#e2e8f0;--muted:#8899aa;--danger:#e76f6f}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
 .hero{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0d1b2a 0%,#1b3a4b 50%,#2a5a6a 100%);z-index:0}
-.hero-bg::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 30% 50%,rgba(74,124,140,.3) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(90,138,90,.2) 0%,transparent 50%);z-index:1}
-.hero-bg .waves{position:absolute;bottom:0;left:0;width:100%;height:120px;background:var(--bg);clip-path:ellipse(50% 100% at 50% 100%);opacity:.3}
+.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0a1628 0%,#162d50 40%,#1b3a5c 70%,#2a5a6a 100%);z-index:0}
+.hero-bg .bg-img{position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('hero-bg.png');background-size:cover;background-position:center 30%;display:block}
+.hero-bg .bg-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(10,22,40,.15) 0%,rgba(10,22,40,.4) 40%,rgba(10,22,40,.55) 60%,rgba(10,22,40,.7) 100%);z-index:1}
+.hero-bg .waves{position:absolute;bottom:0;left:0;width:100%;height:120px;background:var(--bg);clip-path:ellipse(50% 100% at 50% 100%);opacity:.4;z-index:2}
+.hero-content{position:relative;z-index:3;max-width:700px}
 .hero-content{position:relative;z-index:2;max-width:700px}
-.hero h1{font-size:clamp(2rem,6vw,4rem);font-weight:800;color:var(--gold);letter-spacing:-1px;margin-bottom:8px}
-.hero .sub{font-size:clamp(1rem,2.5vw,1.4rem);color:var(--muted);font-weight:300;margin-bottom:6px}
-.hero .date{font-size:1rem;color:var(--water);letter-spacing:3px;margin-bottom:20px}
+.hero-bg .subext-shadow{text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.hero h1{font-size:clamp(2rem,6vw,4rem);font-weight:800;color:var(--gold);letter-spacing:-1px;margin-bottom:8px;text-shadow:0 2px 20px rgba(0,0,0,.5),0 4px 30px rgba(0,0,0,.3)}
+.hero .sub{font-size:clamp(1rem,2.5vw,1.4rem);color:#fff;font-weight:600;margin-bottom:6px;text-shadow:0 2px 15px rgba(0,0,0,.6)}
+.hero .date{font-size:1rem;color:#e8f4ff;letter-spacing:3px;margin-bottom:20px;font-weight:500;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+.hero .text-bg{display:inline-block;background:rgba(10,22,40,.5);backdrop-filter:blur(4px);border-radius:10px;padding:12px 24px;margin-bottom:6px}
+.hero .text-bg .sub{font-size:clamp(1.1rem,2.8vw,1.5rem);color:#fff;font-weight:700;margin:0}
+.hero .text-bg .date{font-size:1rem;color:#d4eaf5;letter-spacing:3px;margin:4px 0 0 0;font-weight:500}
 .hero .countdown{display:flex;gap:16px;justify-content:center;margin-top:10px;flex-wrap:wrap}
 .hero .countdown-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:60px;text-align:center}
 .hero .countdown-item .num{font-size:1.6rem;font-weight:700;color:var(--gold)}
@@ -350,11 +356,17 @@ nav ul li a:hover{color:var(--gold);background:var(--surface)}
 </nav>
 
 <div class="hero">
-<div class="hero-bg"><div class="waves"></div></div>
+<div class="hero-bg">
+  <div class="bg-img"></div>
+  <div class="bg-overlay"></div>
+  <div class="waves"></div>
+</div>
 <div class="hero-content">
 <h1>🏞️ Åsnen 2026</h1>
-<div class="sub">Schweden Angelurlaub</div>
-<div class="date">04. – 12. September 2026 · Småland</div>
+<div class="text-bg">
+  <div class="sub">Schweden Angelurlaub</div>
+  <div class="date">04. – 12. September 2026 · Småland</div>
+</div>
 <div class="countdown" id="countdown"></div>
 <div class="tags">
 <span>🎣 Hecht · Zander · Barsch</span>
