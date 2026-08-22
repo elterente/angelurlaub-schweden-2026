@@ -1316,59 +1316,61 @@ function headingToCardinal(deg){
 
 function updateDashboard(fd,os){
   document.getElementById('flightDashboard').classList.add('show');
-  const now=new Date(),dep=new Date(fd.depTime),arr=new Date(fd.arrTime);
-  const rDist=fd.routeDistance||(fd.depLat&&fd.arrLat?Math.round(haversineKm(fd.depLat,fd.depLon,fd.arrLat,fd.arrLon)):600);
+  const now=new Date();
+  const dep=fd.depTime?new Date(fd.depTime):null;
+  const arr=fd.arrTime?new Date(fd.arrTime):null;
 
   document.getElementById('dashFlightId').textContent=fd.number||'—';
   const sd=document.getElementById('dashStatusDot'),st=document.getElementById('dashStatusText');
-  if(now<dep){sd.className='dot blue';st.textContent='Geplant';}
-  else if(now<arr){sd.className='dot yellow';st.textContent=os&&os.alt?'In der Luft ✈️ (Live)':'In der Luft ✈️';}
-  else{sd.className='dot green';st.textContent='Gelandet ✅';}
+  if(os&&os.alt!=null&&os.alt>0){
+    sd.className='dot yellow';st.textContent='✈️ In der Luft (Live via OpenSky)';
+  }else if(dep&&arr&&now<dep){sd.className='dot blue';st.textContent='Geplant';}
+  else if(dep&&arr&&now<arr){sd.className='dot yellow';st.textContent='✈️ In der Luft';}
+  else if(dep&&arr){sd.className='dot green';st.textContent='Gelandet ✅';}
+  else{sd.className='dot yellow';st.textContent=os?'📡 Live-Position':'✈️ Tracking aktiv';}
 
-  const dc=fd.departure||'MUC',ac=fd.arrival||'HAM';
+  const dc=fd.departure||'—',ac=fd.arrival||'—';
   document.getElementById('dashDepCode').value=dc;
   document.getElementById('dashDepCity').textContent=(FLIGHT_ROUTES[dc]||{}).city||fd.depCity||dc;
-  document.getElementById('dashDepTime').textContent=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dashDepTime').textContent=dep?dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'—';
   document.getElementById('dashArrCode').value=ac;
   document.getElementById('dashArrCity').textContent=(FLIGHT_ROUTES[ac]||{}).city||fd.arrCity||ac;
-  document.getElementById('dashArrTime').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dashArrTime').textContent=arr?arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'—';
 
-  const totalMs=arr-dep,elapsedMs=now-dep;
-  let pct=totalMs>0?Math.min(100,Math.max(0,(elapsedMs/totalMs)*100)):0;
-  document.getElementById('dashProgBar').style.width=pct+'%';
-  document.getElementById('dashProgPct').textContent=Math.round(pct)+'%';
-  document.getElementById('dashProgStart').textContent=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('dashProgEnd').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-
-  const leftKm=Math.round(rDist*(1-pct/100));
-  document.getElementById('metAltitude').textContent=os&&os.alt?os.alt+'m':'? m';
-  document.getElementById('metSpeed').textContent=os&&os.spd?os.spd+' km/h':'~750 km/h';
-  document.getElementById('metDistance').textContent=leftKm>0?leftKm+' km':'0 km';
-  document.getElementById('metETA').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-
-  if(now<dep){
-    const diff=dep-now;
-    document.getElementById('metCountdown').textContent=Math.floor(diff/864e5)+'d '+Math.floor((diff%864e5)/36e5)+'h';
-    document.getElementById('metCountdownLbl').textContent='bis Abflug';
-  }else if(now<arr){
-    const diff=arr-now;
-    document.getElementById('metCountdown').textContent=Math.floor(diff/36e5)+'h '+Math.floor((diff%36e5)/6e4)+'m';
-    document.getElementById('metCountdownLbl').textContent='bis Ankunft';
+  if(dep&&arr){
+    const totalMs=arr-dep,elapsedMs=now-dep;
+    let pct=totalMs>0?Math.min(100,Math.max(0,(elapsedMs/totalMs)*100)):0;
+    document.getElementById('dashProgBar').style.width=pct+'%';
+    document.getElementById('dashProgPct').textContent=Math.round(pct)+'%';
+    document.getElementById('dashProgStart').textContent=dep.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('dashProgEnd').textContent=arr.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    if(now<dep){sd.className='dot blue';st.textContent='Geplant';cntd(dep-now,'bis Abflug');}
+    else if(now<arr){sd.className='dot yellow';st.textContent=os?'✈️ In der Luft (Live)':'✈️ In der Luft';cntd(arr-now,'bis Ankunft');}
+    else{sd.className='dot green';st.textContent='Gelandet ✅';document.getElementById('metCountdown').textContent='✓';document.getElementById('metCountdownLbl').textContent='Angekommen';}
   }else{
-    document.getElementById('metCountdown').textContent='✓';
-    document.getElementById('metCountdownLbl').textContent='Angekommen';
+    document.getElementById('dashProgBar').style.width='0%';
+    document.getElementById('dashProgPct').textContent='?';
+    document.getElementById('dashProgStart').textContent='—';
+    document.getElementById('dashProgEnd').textContent='—';
   }
 
+  document.getElementById('metAltitude').textContent=os&&os.alt?os.alt+'m':'? m';
+  document.getElementById('metSpeed').textContent=os&&os.spd?os.spd+' km/h':'~? km/h';
+  document.getElementById('metDistance').textContent='—';
+  document.getElementById('metETA').textContent='—';
   document.getElementById('metHeading').textContent=os&&os.hdg?os.hdg+'° '+headingToCardinal(os.hdg):'—';
 
-  // Mini-Radar zeichnen (nur dieser eine Flug!)
-
-    const fr24=document.getElementById('fr24Banner');
+  const fr24=document.getElementById('fr24Banner');
   if(fd.number){
     fr24.href='https://www.flightradar24.com/data/flights/'+fd.number.toLowerCase();
     fr24.classList.add('show');
     fr24.innerHTML='📡 <strong>'+fd.number+'</strong> auf FlightRadar24 anzeigen — Position, Route, Höhe, Speed <span class="fr24-arrow">→</span>';
   }
+}
+
+function cntd(ms,l){
+  document.getElementById('metCountdown').textContent=(ms>864e5?Math.floor(ms/864e5)+'d ':'')+Math.floor((ms%864e5)/36e5)+'h '+Math.floor((ms%36e5)/6e4)+'m';
+  document.getElementById('metCountdownLbl').textContent=l;
 }
 
 // ============ LIVE TRACKING ============
